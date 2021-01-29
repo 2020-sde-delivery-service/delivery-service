@@ -20,7 +20,7 @@ app.use(bodyParser.urlencoded({
 
 app.use(bodyParser.json());
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
     next();
@@ -48,3 +48,4 @@ app.set('socketio', io);
 require('./sockets/chatsSocket')(io);
 require('./sockets/messagesSocket')(io);
 
+//randomcomment
