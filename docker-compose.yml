@@ -12,3 +12,9 @@ services:
       context: ./google-maps-adapter
     ports:
       - 8080:8080
+
+  shipment-service:
+    build:
+      context: ./shipment-service
+    ports:
+      - 8090:8090

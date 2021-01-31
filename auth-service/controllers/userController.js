@@ -1,5 +1,9 @@
 const newAuthToken = async function (user) {
-    const token = jwt.sign({ _id: user.id.toString() }, process.env.JWT_SECRET);
+    let signOptions = {
+        expiresIn: "30d",
+        algorithm: "RS256"
+    };
+    const token = jwt.sign({ _id: user.id.toString() }, process.env.PRIVATE_KEY, signOptions);
     user.tokens = user.tokens.concat({ token });
     await user.save();
     return token;
