@@ -18,3 +18,7 @@ services:
       context: ./shipment-service
     ports:
       - 8090:8090
+
+  telegram-bot:
+    build:
+      context: ./telegram-bot
