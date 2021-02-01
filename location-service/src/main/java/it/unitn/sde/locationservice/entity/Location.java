@@ -7,5 +7,5 @@ import lombok.Data;
 @Data
 public class Location {
     @GeoIndexed
-    Point location;
+    Point point;
 }
