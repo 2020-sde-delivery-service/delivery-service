@@ -66,5 +66,27 @@ module.exports = {
             console.error(err);
             res.status(500).send()
         }
+    },
+    getCoordinates: async (req, res) => {
+        const address = req.query.address;
+
+        try {
+            const resp = await axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
+                params: {
+                    address: address,
+                    key: process.env.GOOGLE_KEY
+                }
+            });
+
+            const mydata = {
+                address: resp.data.results[0].formatted_address,
+                location: resp.data.results[0].geometry.location
+            }
+
+            res.send(mydata);
+        } catch (err) {
+            console.error(err);
+            res.status(500).send()
+        }
     }
 }
