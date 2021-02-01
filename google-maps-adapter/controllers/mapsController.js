@@ -7,6 +7,10 @@ module.exports = {
     getOne: async (req, res) => {
         const id = req.params.id;
 
+        if (!id) {
+            return res.status(400).send();
+        }
+
         try {
             const resp = await axios.get('https://url', {
                 params: {
@@ -23,6 +27,10 @@ module.exports = {
     getSingularDistance: async (req, res) => {
         const origin = req.query.origin;
         const destination = req.query.destination;
+
+        if (!(origin && destination)) {
+            return res.status(400).send();
+        }
 
         try {
             const resp = await axios.get('https://maps.googleapis.com/maps/api/distancematrix/json', {
@@ -48,6 +56,10 @@ module.exports = {
         const origins = req.query.origins;
         const destinations = req.query.destinations;
 
+        if (!(origins && destinations)) {
+            return res.status(400).send();
+        }
+
         try {
             const resp = await axios.get('https://maps.googleapis.com/maps/api/distancematrix/json', {
                 params: {
@@ -69,6 +81,10 @@ module.exports = {
     },
     getCoordinates: async (req, res) => {
         const address = req.query.address;
+
+        if (!address) {
+            return res.status(400).send();
+        }
 
         try {
             const resp = await axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
