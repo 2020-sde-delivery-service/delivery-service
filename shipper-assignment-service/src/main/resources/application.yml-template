@@ -1,0 +1,25 @@
+SERVICE_HOST: localhost
+SERVICE_PORT: 8083
+server:
+  port : '${SERVICE_PORT}'
+  host : '${SERVICE_HOST}'
+
+dataservice:
+  url: 'http://localhost:8081'
+locationservice:
+  url: 'http://localhost:8082'
+
+radius : 
+  limit : 200km
+logging:
+  file:
+    path: logs
+    name: base.log
+  level:
+    root: INFO
+    com:
+      hust :
+        baseweb : DEBUG
+    org:
+      springframework: INFO
+  config: classpath:logback-dev.xml
