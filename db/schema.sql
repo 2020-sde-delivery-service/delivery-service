@@ -103,7 +103,7 @@ CREATE TABLE delivery_request (
 	  unit				VARCHAR(60),
 	  customer_phone_number VARCHAR(60),
 	  pickup_location  VARCHAR(60),
-	  deliver_location VARCHAR(60),
+	  delivery_location VARCHAR(60),
 	  status_id        VARCHAR(60),
 	  created_date     TIMESTAMP   NULL,
 	  last_modified_date  TIMESTAMP   NULL,
