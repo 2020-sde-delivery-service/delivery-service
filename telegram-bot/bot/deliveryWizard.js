@@ -122,4 +122,23 @@ step5Handler.command('reject', async (ctx) => {
     return await ctx.scene.leave();
 });
 
-module.exports = { step1Handler, step2Handler, step3Handler, step4Handler, step5Handler };
+const superWizard = new Scenes.WizardScene(
+    'super-wizard',
+    (ctx) => {
+        ctx.reply(
+            '📦 New delivery request',
+            Markup.inlineKeyboard([
+                Markup.button.callback('❌ Cancel', 'cancel'),
+                Markup.button.callback('➡️ Next', 'next'),
+            ])
+        );
+        return ctx.wizard.next();
+    },
+    handlers.step1Handler,
+    handlers.step2Handler,
+    handlers.step3Handler,
+    handlers.step4Handler,
+    handlers.step5Handler
+);
+
+module.exports = superWizard;
