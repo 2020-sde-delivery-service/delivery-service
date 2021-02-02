@@ -44,11 +44,16 @@ public class DeliveryRequest {
     private Date createdDate;
     @LastModifiedDate
     private Date lastModifiedDate;
+
     @PrePersist
     public void prePersist() {
-       if (status == null) {
-           status= new Status(StatusEnum.DELIVERY_REQUEST_CREATED.name());
-       }
+        if (status == null) {
+            status = new Status(StatusEnum.DELIVERY_REQUEST_CREATED.name());
+        }
+        if (createdDate == null)
+            createdDate = new Date();
+        else
+            lastModifiedDate = new Date();
     }
-    
+
 }
