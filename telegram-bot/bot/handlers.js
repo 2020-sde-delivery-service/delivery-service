@@ -1,4 +1,5 @@
 const { Composer, Markup, Scenes, session, Telegraf } = require('telegraf');
+const axios = require('axios');
 
 const CANCEL_BUTTON = '❌ Cancel'
 const ACCEPT_BUTTON = '✅ Accept'
@@ -19,6 +20,22 @@ const step5Handler = new Composer();
 let start_address = '';
 let destination_address = '';
 let phone_number = '';
+
+const getCorrectAddress = async (address) => {
+    try {
+        const resp = await axios.get('http://google-maps-adapter:8080/maps/v1/geocode', {
+            params: {
+                address: address
+            }
+        });
+
+        address = resp.data.address;
+    } catch (err) {
+        console.error(err);
+    }
+
+    return address;
+}
 
 step1Handler.action('next', async (ctx) => {
     await ctx.editMessageText(DELIVERY_REQUEST);
@@ -68,6 +85,10 @@ step4Handler.command('cancel', async (ctx) => {
 });
 step4Handler.on('text', async (ctx) => {
     phone_number = ctx.message.text;
+
+    start_address = await getCorrectAddress(start_address);
+    destination_address = await getCorrectAddress(destination_address);
+
     await ctx.reply(
         RECAP_MESSAGE(),
         Markup.inlineKeyboard([
