@@ -10,6 +10,6 @@ import lombok.Data;
 public class People {
     @Id
     String partyId;
-    Location location;
+    Location currentLocation;
 
 }

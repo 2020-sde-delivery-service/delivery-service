@@ -10,7 +10,6 @@ import org.springframework.data.repository.CrudRepository;
 import it.unitn.sde.locationservice.entity.People;
 
 public interface GeoRepo extends CrudRepository<People, String> {
-    List<People> findByLocationLocationNear(Point point, Distance distance);
-
+    List<People> findByCurrentLocationPointNear(Point point, Distance distance);
     List<People> findByLocationWithin(Circle circle);
 }
