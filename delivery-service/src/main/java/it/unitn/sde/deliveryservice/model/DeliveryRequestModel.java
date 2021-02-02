@@ -13,8 +13,8 @@ public class DeliveryRequestModel {
     private String unit;
     private String customerPhoneNumber;
     private String pickupLocation;
-    private String deliverLocation;
-    private Map<String,Object> status;
+    private String deliveryLocation;
+    private String statusId;
     private Date createdDate;
     private Date lastModifiedDate;
 }

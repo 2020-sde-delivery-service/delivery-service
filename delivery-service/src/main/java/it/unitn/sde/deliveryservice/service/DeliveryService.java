@@ -1,8 +1,10 @@
 package it.unitn.sde.deliveryservice.service;
 
 import it.unitn.sde.deliveryservice.model.DeliveryRequestInputModel;
+import it.unitn.sde.deliveryservice.model.DeliveryRequestModel;
 
 public interface DeliveryService {
-    public String createDeliveryRequest(DeliveryRequestInputModel deliveryModel);
+    public DeliveryRequestModel createDeliveryRequest(DeliveryRequestInputModel deliveryModel);
+    public String processDeliveryRequest(DeliveryRequestModel deliveryModel);
     
 }

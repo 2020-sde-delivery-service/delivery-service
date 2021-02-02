@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.unitn.sde.deliveryservice.model.DeliveryRequestInputModel;
+import it.unitn.sde.deliveryservice.model.DeliveryRequestModel;
 import it.unitn.sde.deliveryservice.service.DeliveryService;
 import lombok.extern.log4j.Log4j;
 import lombok.extern.log4j.Log4j2;
@@ -27,11 +28,11 @@ public class ApiController {
     @PostMapping("/create-delivery-request")
     public ResponseEntity<?> createDeliveryRequest(@RequestBody DeliveryRequestInputModel deliveryModel) {
         log.info("Create delivery request -- start");
-        String id=deliveryService.createDeliveryRequest(deliveryModel);
+        DeliveryRequestModel deliveryRequestModel=deliveryService.createDeliveryRequest(deliveryModel);
+        deliveryService.processDeliveryRequest(deliveryRequestModel);
         Map<String,String> res=new HashMap<>();
         res.put("status", "sucess");
-        res.put("id", id);
-        
+        res.put("id", deliveryRequestModel.getDeliveryRquestId().toString());
         return ResponseEntity.ok().body(res);
     }
 
