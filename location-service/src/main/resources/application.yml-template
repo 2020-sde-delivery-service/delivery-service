@@ -1,0 +1,17 @@
+spring:
+  redis:
+    host : ${REDIS_HOST} #e.g. localhost
+    port : ${REDIS_PORT} #e.g. 6379
+
+logging:
+  file:
+    path: logs
+    name: location-service.log
+  level:
+    root: INFO
+    com:
+      hust :
+        baseweb : INFO
+    org:
+      springframework: INFO
+  config: classpath:logback-dev.xml

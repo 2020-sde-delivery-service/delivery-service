@@ -96,7 +96,7 @@ CREATE TABLE user_login_security_group (
 );
 --This part is nice to have.
 
-CREATE TABLE devivery_request (
+CREATE TABLE delivery_request (
 	  delivery_request_id   UUID NOT NULL default uuid_generate_v1(),
 	  pickup_address      VARCHAR(255) NOT NULL,
 	  delivery_address      VARCHAR(255) NOT NULL,
@@ -105,9 +105,11 @@ CREATE TABLE devivery_request (
 	  pickup_location  VARCHAR(60),
 	  deliver_location VARCHAR(60),
 	  status_id        VARCHAR(60),
+	  created_date     TIMESTAMP   NULL,
+	  last_modified_date  TIMESTAMP   NULL,
 	  last_updated_stamp TIMESTAMP   ,
 	  created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	  CONSTRAINT pk_devivery_request PRIMARY KEY (delivery_request_id),
+	  CONSTRAINT pk_delivery_request PRIMARY KEY (delivery_request_id),
 	  CONSTRAINT fk_delivery_request_status FOREIGN KEY (status_id) REFERENCES status (status_id)
 );
 
