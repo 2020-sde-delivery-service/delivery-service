@@ -35,7 +35,7 @@ public class DeliveryRequest {
     private String unit;
     private String customerPhoneNumber;
     private String pickupLocation;
-    private String deliverLocation;
+    private String deliveryLocation;
 
     @JoinColumn(name = "status_id", referencedColumnName = "status_id")
     @ManyToOne(fetch = FetchType.EAGER)

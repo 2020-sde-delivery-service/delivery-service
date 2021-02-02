@@ -4,7 +4,9 @@ SQL_DB_HOST: pgsql
 SQL_DB_PORT: 5432
 SQL_DB_USER: postgres
 SQL_DB_PASS: baseweb@123
-
+server:
+  port : SERVICE_PORT
+  host : SERVICE_HOST
 spring:  
   jackson: 
     serialization:
