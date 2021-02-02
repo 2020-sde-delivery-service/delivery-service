@@ -1,5 +1,8 @@
 package it.unitn.sde.deliveryservice.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,8 +27,12 @@ public class ApiController {
     @PostMapping("/create-delivery-request")
     public ResponseEntity<?> createDeliveryRequest(@RequestBody DeliveryRequestInputModel deliveryModel) {
         log.info("Create delivery request -- start");
-        deliveryService.createDeliveryRequest(deliveryModel);
-        return null;
+        String id=deliveryService.createDeliveryRequest(deliveryModel);
+        Map<String,String> res=new HashMap<>();
+        res.put("status", "sucess");
+        res.put("id", id);
+        
+        return ResponseEntity.ok().body(res);
     }
 
 }
