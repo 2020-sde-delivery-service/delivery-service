@@ -5,11 +5,23 @@ const bot = require('../bot/bot');
 dotenv.config();
 
 module.exports = {
-    send: async (req, res) => {
-        const chatId = req.params.chatId;
-        const text = req.query.text;
+    sendShippingRequest: async (req, res) => {
 
-        bot.telegram.sendMessage();
+        //check if user is shipper
+
+        const shipperId = req.params.shipperId;
+        const shipmentInfo = req.body.shipmentInfo;
+
+        bot.telegram.sendMessage(shipperId, text);
+    },
+    sendShippingInfo: async (req, res) => {
+
+        //check if user is shipper
+
+        const shipperId = req.params.shipperId;
+        const shipmentInfo = req.body.shipmentInfo;
+
+        bot.telegram.sendMessage(shipperId, text);
     }
 
 }
