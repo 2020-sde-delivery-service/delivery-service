@@ -26,8 +26,8 @@ import lombok.extern.log4j.Log4j2;
 public class DeliveryServiceImpl implements DeliveryService {
     @Autowired
     private RestTemplate restTemplate;
-    @Value("${dataservice.url}")
-    private String dataServiceUrl;
+    @Value("${shipmentservice.url}")
+    private String shimentServiceUrl;
 
     @Value("${googlemapservice.url}")
     private String googlemapservice;
@@ -46,8 +46,9 @@ public class DeliveryServiceImpl implements DeliveryService {
                 .setPickupLocation(geoCodePickup.getLocation().getLat() + "," + geoCodePickup.getLocation().getLng());
         deliveryModel.setDeliveryLocation(
                 geoCodeDelivery.getLocation().getLat() + "," + geoCodeDelivery.getLocation().getLng());
-        DeliveryRequestModel request = restTemplate.postForObject(dataServiceUrl + ApiConstant.DELIVERY_REQUEST_API,
+        DeliveryRequestModel request = restTemplate.postForObject(shimentServiceUrl + ApiConstant.CREATE_DELIVERY_REQUEST_API,
                 deliveryModel, DeliveryRequestModel.class);
+        log.info(request.toString());
         return request;
     }
 
@@ -68,8 +69,8 @@ public class DeliveryServiceImpl implements DeliveryService {
 
             Map<String, String> body = new HashMap<>();
             body.put("assignedShipperId", candidates.getData().get(i));
-            DeliveryRequestModel re = restTemplate.patchForObject(
-                    dataServiceUrl + ApiConstant.DELIVERY_REQUEST_API +"/"+ deliveryModel.getDeliveryRquestId().toString(),
+            DeliveryRequestModel re = restTemplate.postForObject(
+                    shimentServiceUrl + ApiConstant.ASSIGN_SHIPPER_API +"/"+ deliveryModel.getDeliveryRquestId().toString(),
                     body, DeliveryRequestModel.class);
             try {
                 Thread.sleep(50000);
@@ -78,7 +79,7 @@ public class DeliveryServiceImpl implements DeliveryService {
                 e.printStackTrace();
             }
             log.info("end "+i);            
-            re = restTemplate.getForObject(dataServiceUrl + ApiConstant.DELIVERY_REQUEST_API + "/"
+            re = restTemplate.getForObject(shimentServiceUrl + ApiConstant.GET_DELIVERY_REQUEST_API + "/"
                     + deliveryModel.getDeliveryRquestId().toString(), DeliveryRequestModel.class);
             if (StatusEnum.DELIVERY_REQUEST_ACCEPTED.name().equals(re.getStatusId())) {
                 log.info("assignment process completed");
