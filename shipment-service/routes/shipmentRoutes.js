@@ -1,8 +1,11 @@
 const express = require('express');
 const router = new express.Router();
 
-const mapsController = require('../controllers/shipmentController');
+const shipmentController = require('../controllers/shipmentController');
 
-router.get('/maps/v1/shipment/:id', mapsController.getOne);
+router.post('/create', shipmentController.create);
+router.get('/getOne/:id', shipmentController.getOne);
+router.post('/assign-shipper/:deliveryRequestId', shipmentController.assignShipper);
+router.post('/accept-request', shipmentController.acceptRequest);
 
 module.exports = router;
