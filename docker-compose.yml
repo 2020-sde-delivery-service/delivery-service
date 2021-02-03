@@ -4,17 +4,17 @@ services:
   db:
     image: postgres
     volumes:
-        - ./db/0_init.sql:/docker-entrypoint-initdb.d/0_init.sql
-        - ./db/1_schema.sql:/docker-entrypoint-initdb.d/1_schema.sql
-        - ./db/2_seed.sql:/docker-entrypoint-initdb.d/2_seed.sql
-        - ./db/3_demo.sql:/docker-entrypoint-initdb.d/3_demo.sql
-        - postgres_data:/var/lib/postgresql/data/
+      - ./db/0_init.sql:/docker-entrypoint-initdb.d/0_init.sql
+      - ./db/1_schema.sql:/docker-entrypoint-initdb.d/1_schema.sql
+      - ./db/2_seed.sql:/docker-entrypoint-initdb.d/2_seed.sql
+      - ./db/3_demo.sql:/docker-entrypoint-initdb.d/3_demo.sql
+      - postgres_data:/var/lib/postgresql/data/
     environment:
-        - POSTGRES_DB=delivery_service
-        - POSTGRES_USER=sde
-        - POSTGRES_PASSWORD=sde@2020
+      - POSTGRES_DB=delivery_service
+      - POSTGRES_USER=sde
+      - POSTGRES_PASSWORD=sde@2020
     ports:
-            - 5432:5432
+      - 5432:5432
   redis:
     image: redis:alpine
 
@@ -36,49 +36,51 @@ services:
     ports:
       - 8090:8090
     environment:
-        DATA_SERVICE_URL: 'http://data-service:8080'
+      DATA_SERVICE_URL: "http://data-service:8080"
   data-service:
     build:
       context: ./data-service
     ports:
       - 8081:8080
     environment:
-        POSTGRES_HOST: db
-        POSTGRES_PORT: 5432
-        POSTGRES_DB: ${PG_DATABASE:-delivery_service}
-        POSTGRES_PASSWORD: ${PG_PASSWORD:-sde@2020}
-        POSTGRES_USER: sde
-        
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${PG_DATABASE:-delivery_service}
+      POSTGRES_PASSWORD: ${PG_PASSWORD:-sde@2020}
+      POSTGRES_USER: sde
+
   location-service:
     build:
       context: ./location-service
     ports:
       - 8082:8080
     environment:
-        REDIS_HOST: redis
-        REDIS_PORT: 6379
-      
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+
   shipper-assignment-service:
     build:
       context: ./shipper-assignment-service
     ports:
       - 8083:8080
     environment:
-        DATA_SERVICE_URL: 'http://data-service:8080'
-        LOCATION_SERVICE_URL: 'http://location-service:8080'
-        RADIUS_LIMIT: '200km'
+      DATA_SERVICE_URL: "http://data-service:8080"
+      LOCATION_SERVICE_URL: "http://location-service:8080"
+      RADIUS_LIMIT: "200km"
   delivery-service:
     build:
       context: ./delivery-service
     ports:
       - 8084:8080
     environment:
-        SHIPMENT_SERVICE_URL: 'http://shipment-service:8090'
-        GOOGLEMAP_SERVICE_URL: 'http://google-maps-adapter:8080'
-        SHIPPER_ASSIGNMENT_SERVICE_URL: 'http://shipper-assignment-service:8080'
-        
-        
+      SHIPMENT_SERVICE_URL: "http://shipment-service:8090"
+      GOOGLEMAP_SERVICE_URL: "http://google-maps-adapter:8080"
+      SHIPPER_ASSIGNMENT_SERVICE_URL: "http://shipper-assignment-service:8080"
+  telegram-bot:
+    build:
+      context: ./telegram-bot
+    ports:
+      - 8060:8060
+
 volumes:
   postgres_data:
-      
-      
