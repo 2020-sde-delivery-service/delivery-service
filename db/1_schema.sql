@@ -95,6 +95,14 @@ CREATE TABLE user_login_security_group (
 	  CONSTRAINT user_secgrp_user FOREIGN KEY (user_login_id) REFERENCES user_login (user_login_id)
 );
 --This part is nice to have.
+CREATE TABLE shipper (
+	  shipper_id   UUID NOT NULL ,
+	  current_location      VARCHAR(255) NOT NULL,
+	  last_updated_stamp TIMESTAMP   ,
+	  created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	  CONSTRAINT pk_shipper PRIMARY KEY (shipper_id),
+	  CONSTRAINT fk_shipper_party FOREIGN KEY (shipper_id) REFERENCES party (party_id)
+);
 
 CREATE TABLE delivery_request (
 	  delivery_request_id   UUID NOT NULL default uuid_generate_v1(),
@@ -102,35 +110,18 @@ CREATE TABLE delivery_request (
 	  delivery_address      VARCHAR(255) NOT NULL,
 	  unit				VARCHAR(60),
 	  customer_phone_number VARCHAR(60),
+	  assigned_shipper_id UUID,
 	  pickup_location  VARCHAR(60),
-	  deliver_location VARCHAR(60),
+	  delivery_location VARCHAR(60),
 	  status_id        VARCHAR(60),
-	  created_date     TIMESTAMP   NULL,
+	  created_date     TIMESTAMP   NOT NULL,
 	  last_modified_date  TIMESTAMP   NULL,
 	  last_updated_stamp TIMESTAMP   ,
 	  created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	  CONSTRAINT pk_delivery_request PRIMARY KEY (delivery_request_id),
-	  CONSTRAINT fk_delivery_request_status FOREIGN KEY (status_id) REFERENCES status (status_id)
+	  CONSTRAINT fk_delivery_request_status FOREIGN KEY (status_id) REFERENCES status (status_id),
+	  CONSTRAINT fk_delivery_request_shipper FOREIGN KEY (assigned_shipper_id) REFERENCES shipper (shipper_id)
 );
-
-CREATE TABLE shipper (
-	  shipper_id   UUID NOT NULL ,
-	  current_location      VARCHAR(255) NOT NULL,
-	  last_updated_stamp TIMESTAMP   ,
-	  created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	  CONSTRAINT pk_shipper PRIMARY KEY (shipper_id),
-	  CONSTRAINT fk_shipper_party FOREIGN KEY (shipper_id) REFERENCES party (party_id)
-);
-
-CREATE TABLE shipper (
-	  shipper_id   UUID NOT NULL ,
-	  current_location      VARCHAR(255) NOT NULL,
-	  last_updated_stamp TIMESTAMP   ,
-	  created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	  CONSTRAINT pk_shipper PRIMARY KEY (shipper_id),
-	  CONSTRAINT fk_shipper_party FOREIGN KEY (shipper_id) REFERENCES party (party_id)
-);
-
 
 CREATE TABLE trip (
 	  trip_id   UUID NOT NULL ,

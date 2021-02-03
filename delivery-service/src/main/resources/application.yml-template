@@ -1,0 +1,26 @@
+SERVICE_HOST: localhost
+SERVICE_PORT: 8080
+server:
+  port : '${SERVICE_PORT}'
+  host : '${SERVICE_HOST}'
+
+shipmentservice:
+  url: ${SHIPMENT_SERVICE_URL}
+googlemapservice:
+  url: ${GOOGLEMAP_SERVICE_URL}
+
+shipperassignmentservice:
+  url: ${SHIPPER_ASSIGNMENT_SERVICE_URL}
+
+logging:
+  file:
+    path: logs
+    name: base.log
+  level:
+    root: INFO
+    com:
+      hust :
+        baseweb : DEBUG
+    org:
+      springframework: INFO
+  config: classpath:logback-dev.xml

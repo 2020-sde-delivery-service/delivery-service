@@ -4,8 +4,8 @@ import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
 import org.springframework.stereotype.Component;
 
-import ch.qos.logback.core.status.Status;
 import it.unitn.sde.entity.DeliveryRequest;
+import it.unitn.sde.entity.Status;
 @Component
 public class SpringRestConfiguration implements RepositoryRestConfigurer {
 

@@ -35,11 +35,9 @@ public class DeliveryRequest {
     private String unit;
     private String customerPhoneNumber;
     private String pickupLocation;
-    private String deliverLocation;
-
-    @JoinColumn(name = "status_id", referencedColumnName = "status_id")
-    @ManyToOne(fetch = FetchType.EAGER)
-    private Status status;
+    private String deliveryLocation;
+    private String statusId;
+    private UUID assignedShipperId;
     @CreatedDate
     private Date createdDate;
     @LastModifiedDate
@@ -47,8 +45,8 @@ public class DeliveryRequest {
 
     @PrePersist
     public void prePersist() {
-        if (status == null) {
-            status = new Status(StatusEnum.DELIVERY_REQUEST_CREATED.name());
+        if (statusId == null) {
+            statusId = StatusEnum.DELIVERY_REQUEST_CREATED.name();
         }
         if (createdDate == null)
             createdDate = new Date();
