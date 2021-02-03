@@ -1,15 +1,16 @@
-
 SERVICE_HOST: localhost
-SERVICE_PORT: 8091
+SERVICE_PORT: 8080
 server:
   port : '${SERVICE_PORT}'
   host : '${SERVICE_HOST}'
 
-dataservice:
-  url: 'http://localhost:8081'
+shipmentservice:
+  url: ${SHIPMENT_SERVICE_URL}
 googlemapservice:
-  url: 'http://localhost:8080'
+  url: ${GOOGLEMAP_SERVICE_URL}
 
+shipperassignmentservice:
+  url: ${SHIPPER_ASSIGNMENT_SERVICE_URL}
 
 logging:
   file:
