@@ -1,5 +1,5 @@
 package it.unitn.sde.entity;
-import java.util.Date;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -11,13 +11,15 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import lombok.Getter;
 import lombok.Setter;
+
 @Entity
 @Setter
 @Getter
@@ -29,37 +31,19 @@ public class UserLogin {
     private String userLoginId;
 
     @Column(name = "current_password")
+    @JsonIgnore
     private String password;
-
-    private String passwordHint;
-
-    private String otpSecret;
 
     private boolean isSystem;
 
     private boolean enabled;
 
-    private boolean hasLoggedOut;
-
-    private boolean requirePasswordChange;
-
-    private Integer successiveFailedLogins;
-
-    private String clientToken;
-
-    private int otpResendNumber;
-
-
-    @JoinColumn(name = "party_id", referencedColumnName = "party_id")
-    @OneToOne(fetch = FetchType.EAGER)
-    private Party party;
-
-
+    // @JoinColumn(name = "party_id", referencedColumnName = "party_id")
+    // @OneToOne(fetch = FetchType.EAGER)
+    // private Party party;
+    private UUID partyId;
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "user_login_security_group",
-            joinColumns = @JoinColumn(name = "user_login_id", referencedColumnName = "user_login_id"),
-            inverseJoinColumns = @JoinColumn(name = "group_id", referencedColumnName = "group_id"))
+    @JoinTable(name = "user_login_security_group", joinColumns = @JoinColumn(name = "user_login_id", referencedColumnName = "user_login_id"), inverseJoinColumns = @JoinColumn(name = "group_id", referencedColumnName = "group_id"))
     private List<SecurityGroup> roles;
 
     public UserLogin() {
@@ -73,27 +57,11 @@ public class UserLogin {
         this.enabled = enabled;
     }
 
-
-    private Date disabledDateTime;
-
-
-   
-
-
-    public UserLogin(String password, String passwordHint, boolean isSystem,
-                     boolean enabled, boolean hasLoggedOut,
-                     boolean requirePasswordChange, int successiveFailedLogins,
-                     Date disabledDateTime) {
+    public UserLogin(String password, boolean isSystem, boolean enabled) {
         super();
         this.password = password;
-        this.passwordHint = passwordHint;
         this.isSystem = isSystem;
         this.enabled = enabled;
-        this.hasLoggedOut = hasLoggedOut;
-        this.requirePasswordChange = requirePasswordChange;
-        this.successiveFailedLogins = successiveFailedLogins;
-        this.disabledDateTime = disabledDateTime;
     }
-
 
 }
