@@ -62,12 +62,11 @@ public class Party {
         this.lastModifiedByUserLogin = lastModifiedByUserLogin;
     }
 
-    public Party(String partyCode, String partyTypeId, String statusId, UserLogin userLogin, boolean isUnread,
+    public Party(String partyCode, String partyTypeId, String statusId, boolean isUnread,
             String createdByUserLogin, String lastModifiedByUserLogin) {
         this.partyCode = partyCode;
         this.partyTypeId = partyTypeId;
         this.statusId = statusId;
-        this.userLogin = userLogin;
         this.isUnread = isUnread;
         this.createdByUserLogin = createdByUserLogin;
         this.lastModifiedByUserLogin = lastModifiedByUserLogin;
