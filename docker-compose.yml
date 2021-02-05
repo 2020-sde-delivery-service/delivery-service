@@ -23,6 +23,8 @@ services:
       context: ./auth-service
     ports:
       - 8070:8070
+    environment:
+      DATA_SERVICE_URL: "http://data-service:8080"
 
   google-maps-adapter:
     build:
@@ -81,6 +83,17 @@ services:
       context: ./telegram-bot
     ports:
       - 8060:8060
+    environment:
+      USER_SERVICE_URL: "http://auth-service:8070"
+      SHIPMENT_SERVICE_URL: "http://shipment-service:8090"
+      GOOGLEMAP_SERVICE_URL: "http://google-maps-adapter:8080"
+  status-service:
+    build:
+      context: ./status-service
+    ports:
+      - 8050:8050
+    environment:
+      SHIPMENT_SERVICE_URL: "http://shipment-service:8090"
 
 volumes:
   postgres_data:

@@ -3,7 +3,7 @@ const axios = require('axios');
 module.exports = {
     getCorrectAddress: async (address) => {
         try {
-            const resp = await axios.get('http://google-maps-adapter:8080/maps/v1/geocode', {
+            const resp = await axios.get(process.env.GOOGLEMAP_SERVICE_URL + '/maps/v1/geocode', {
                 params: {
                     address: address
                 }
@@ -16,7 +16,7 @@ module.exports = {
 
         return address;
     },
-    getShipments: async (shipper) => {
+    getShipments: async (shipperId) => {
         /*
         get shipments of the shipper
         try {
@@ -44,7 +44,7 @@ module.exports = {
 
         return shipping;
     },
-    getTrip: async (shipper) => {
+    getTrip: async (shipperId) => {
         /*
         get trip of the shipper
         try {
@@ -69,7 +69,7 @@ module.exports = {
 
         return trip;
     },
-    getShipmentsStatus: async (user) => {
+    getShipmentsStatus: async (userId) => {
         /*
         get trip of the shipper
         try {
@@ -96,5 +96,64 @@ module.exports = {
         ];
 
         return shipments;
-    }
+    },
+    createDeliveryRequest: async (delivery) => {
+        let ok = false;
+        try {
+            const resp = await axios.post(process.env.SHIPMENT_SERVICE_URL + '/users/v1/' + chatId + '/login', delivery);
+            ok = resp.data.id ? true : false;
+        } catch (err) {
+            console.error(err);
+        }
+
+        return ok;
+    },
+    checkShipper: async (chatId) => {
+        let ok = false;
+        try {
+            const resp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/' + chatId + '/shipper');
+            ok = resp.data.isShipper;
+        } catch (err) {
+            console.error(err);
+        }
+
+        return ok;
+    },
+    setShipper: async (chatId) => {
+        let ok = false;
+        try {
+            const resp = await axios.post(process.env.USER_SERVICE_URL + '/users/v1/' + chatId + '/shipper');
+            ok = resp.data.isShipper;
+        } catch (err) {
+            console.error(err);
+        }
+
+        return ok;
+    },
+    acceptShipment: async (deliveryRequestId) => {
+        let ok = false;
+        try {
+            const resp = await axios.post(process.env.SHIPMENT_SERVICE_URL + '/shipment/v1/shipper' + deliveryRequestId);
+            ok = resp.data.isShipper;
+        } catch (err) {
+            console.error(err);
+        }
+
+        return ok;
+    },
+    start: async (chatId, name) => {
+        let ok = false;
+        try {
+            const resp = await axios.post(process.env.USER_SERVICE_URL + '/users/v1/' + chatId + '/login',
+                {
+                    name: name
+                }
+            );
+            ok = resp.data.id ? true : false;
+        } catch (err) {
+            console.error(err);
+        }
+
+        return ok;
+    },
 }

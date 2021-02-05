@@ -9,8 +9,8 @@ const deliveryConfirmWizard = require('./deliveryConfirmWizard');
 const trip = require('./trip');
 const becomeShipperWizard = require('./becomeShipperWizard');
 const status = require('./status');
-
-//const pickupWizard = require('./tripWizard');
+const { checkShipper, acceptShipment } = require('./helpers');
+const strings = require('../constant/strings');
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
@@ -37,6 +37,24 @@ bot.command('deliver', (ctx) => ctx.scene.enter('delivery-wizard'));
 bot.command('trip', trip);
 bot.command('becomeshipper', (ctx) => ctx.scene.enter('shipper-wizard'));
 bot.command('status', status);
+
+bot.hears(/\/acceptDelivery(.+)/, async (ctx) => {
+    let deliveryId = ctx.match[1];
+    let isShipper = await checkShipper(ctx.chat.id);
+    if (isShipper) {
+        let ok = await acceptShipment(deliveryId);
+        if (ok) {
+            ctx.reply(strings.BC_ACCEPT_MESSAGE);
+        }
+    } else {
+        ctx.reply(strings.ERROR_MESSAGE);
+    }
+});
+
+bot.hears(/\/rejectDelivery(.+)/, async (ctx) => {
+    console.log(ctx.match[1]);
+});
+
 
 bot.on('location', (ctx) => { console.log(ctx.message.location) });
 bot.on('edited_message', (ctx) => { console.log(ctx.editedMessage.location) });
