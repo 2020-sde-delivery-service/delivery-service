@@ -23,7 +23,7 @@ INSERT INTO status (status_id, status_type_id, status_code, sequence_id, descrip
 INSERT INTO status (status_id, status_type_id, status_code, sequence_id, description, last_updated_stamp, created_stamp) VALUES ('TRIP_CREATED', 'TRIP_STATUS', 'CREATED', 0, 'Trip request created', NOW(), NOW());
 INSERT INTO status (status_id, status_type_id, status_code, sequence_id, description, last_updated_stamp, created_stamp) VALUES ('TRIP_ACCEPTED', 'TRIP_STATUS', 'ACCEPTED', 1, 'Trip request accepted', NOW(), NOW());
 INSERT INTO status (status_id, status_type_id, status_code, sequence_id, description, last_updated_stamp, created_stamp) VALUES ('TRIP_PROCESSING', 'TRIP_STATUS', 'PROCESSING', 2, 'Trip request processing', NOW(), NOW());
-INSERT INTO status (status_id, status_type_id, status_code, sequence_id, description, last_updated_stamp, created_stamp) VALUES ('TRIP_DELIVERIED', 'TRIP_STATUS', 'DELIVERIED', 3, 'Trip request deliveried', NOW(), NOW());
+INSERT INTO status (status_id, status_type_id, status_code, sequence_id, description, last_updated_stamp, created_stamp) VALUES ('TRIP_FINISHED', 'TRIP_STATUS', 'DELIVERIED', 3, 'Trip request deliveried', NOW(), NOW());
 
 INSERT INTO status (status_id, status_type_id, status_code, sequence_id, description, last_updated_stamp, created_stamp) VALUES ('POINT_ASSIGNED', 'POINT_STATUS', 'ASSIGNED', 0, 'Assigned point', NOW(), NOW());
 INSERT INTO status (status_id, status_type_id, status_code, sequence_id, description, last_updated_stamp, created_stamp) VALUES ('POINT_PROCESSED', 'POINT_STATUS', 'PROCESSED', 1, 'Point processed', NOW(), NOW());
@@ -32,7 +32,7 @@ INSERT INTO security_group (group_id, description, last_updated_stamp, created_s
 INSERT INTO security_group (group_id, description, last_updated_stamp, created_stamp) VALUES ('ROLE_CUSTOMER', 'Customer group, has all customer`s permissions.', '2017-01-03 10:12:23.994', '2017-01-03 10:12:23.993');
 INSERT INTO security_group (group_id, description, last_updated_stamp, created_stamp) VALUES ('ROLE_SHIPPER', 'Shipper group, has all shipper`s permissions.', '2017-01-03 10:12:23.994', '2017-01-03 10:12:23.993');
 
-INSERT INTO party (party_id, party_type_id, external_id, description, status_id, created_date, created_by_user_login, last_modified_date, last_modified_by_user_login, is_unread, last_updated_stamp, created_stamp, party_code) VALUES ('bd6322f2-2121-11ea-81a8-979e2f76b5a4', 'PERSON', NULL, NULL, 'PARTY_ENABLED', NULL, NULL, NULL, NULL, FALSE, NOW(), NOW(), 'admin');
+INSERT INTO party (party_id, user_id, party_type_id, external_id, description, status_id, created_date,  last_modified_date,  is_unread, last_updated_stamp, created_stamp, party_code) VALUES ('bd6322f2-2121-11ea-81a8-979e2f76b5a4','admin', 'PERSON', NULL, NULL, 'PARTY_ENABLED', NULL,  NULL,  FALSE, NOW(), NOW(), 'admin');
 INSERT  INTO person (party_id, first_name, middle_name, last_name, gender, birth_date, last_updated_stamp, created_stamp) VALUES ('bd6322f2-2121-11ea-81a8-979e2f76b5a4','admin',',',',','M',NOW(),null,NOW());
-INSERT INTO user_login (user_login_id, current_password, is_system, enabled, last_updated_stamp, created_stamp, party_id) VALUES ( 'admin', '$2a$04$cqFXgdkB.8u2HwT3QUTVZuePtHdzi.rWFCjdgNbVB7l6vn/yAU7F6',  FALSE, TRUE,  NOW(), NOW(), 'bd6322f2-2121-11ea-81a8-979e2f76b5a4');
-INSERT INTO user_login_security_group (user_login_id, group_id, last_updated_stamp, created_stamp) VALUES ('admin', 'ROLE_FULL_ADMIN', NOW(), NOW());
+
+INSERT INTO party_security_group (party_id, group_id, last_updated_stamp, created_stamp) VALUES ('bd6322f2-2121-11ea-81a8-979e2f76b5a4', 'ROLE_FULL_ADMIN', NOW(), NOW());
