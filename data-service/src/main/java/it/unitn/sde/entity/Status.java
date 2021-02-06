@@ -1,7 +1,5 @@
 package it.unitn.sde.entity;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -20,7 +18,7 @@ import lombok.Setter;
 public class Status {
     public static enum StatusEnum {
         PARTY_ENABLED, PARTY_DISABLED, DELIVERY_REQUEST_CREATED, DELIVERY_REQUEST_ACCEPTED, DELIVERY_REQUEST_PROCESSING,
-        DELIVERY_REQUEST_DELIVERIED, TRIP_CREATED, TRIP_ACCEPTED, TRIP_PROCESSING, TRIP_DELIVERIED
+        DELIVERY_REQUEST_DELIVERIED, TRIP_CREATED, TRIP_ACCEPTED, TRIP_PROCESSING, TRIP_DELIVERIED,POINT_ASSIGNED,POINT_PROCESSED
 
     }
 
