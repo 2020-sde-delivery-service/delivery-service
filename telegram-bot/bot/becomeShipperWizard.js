@@ -1,16 +1,22 @@
 const { Composer, Markup, Scenes, session, Telegraf } = require('telegraf');
 
 const strings = require('../constant/strings');
+const { setUserToShipper } = require('./helpers');
 
 const step1Handler = new Composer();
 
 step1Handler.action('accept', async (ctx) => {
     //send shipper
+    const ok = await setShipper(ctx.from.id);
     await ctx.editMessageText(strings.BSW_ASK_MESSAGE);
-    ctx.reply(strings.BSW_ACCEPT_MESSAGE, Markup
-        .keyboard(['/trip', '/pickup', '/deliver'])
-        .resize()
-    );
+    if (ok) {
+        ctx.reply(strings.BSW_ACCEPT_MESSAGE, Markup
+            .keyboard(['/trip', '/pickup', '/deliver'])
+            .resize()
+        );
+    } else {
+        ctx.reply(ERROR_MESSAGE);
+    }
     return await ctx.scene.leave();
 });
 step1Handler.action('cancel', async (ctx) => {
@@ -20,11 +26,16 @@ step1Handler.action('cancel', async (ctx) => {
 });
 step1Handler.command('accept', async (ctx) => {
     //send shipper
+    const ok = await setUserToShipper(ctx.from.id);
     await ctx.editMessageText(strings.BSW_ASK_MESSAGE);
-    ctx.reply(strings.BSW_ACCEPT_MESSAGE, Markup
-        .keyboard(['/trip', '/pickup', '/deliver'])
-        .resize()
-    );
+    if (ok) {
+        ctx.reply(strings.BSW_ACCEPT_MESSAGE, Markup
+            .keyboard(['/trip', '/pickup', '/deliver'])
+            .resize()
+        );
+    } else {
+        ctx.reply(ERROR_MESSAGE);
+    }
     return await ctx.scene.leave();
 });
 step1Handler.command('cancel', async (ctx) => {

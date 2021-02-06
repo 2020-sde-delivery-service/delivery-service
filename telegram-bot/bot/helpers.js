@@ -1,4 +1,7 @@
 const axios = require('axios');
+const headers = {
+    "Content-Type": "application/json"
+}
 
 module.exports = {
     getCorrectAddress: async (address) => {
@@ -31,6 +34,8 @@ module.exports = {
             console.error(err);
         }
     */
+
+
 
         let shipping = [
             { shipment: "id_54735", pickup: "Trento, via Brennero 10", delivery: "Trento, via Brennero 70", phone: "1551651189" },
@@ -100,8 +105,8 @@ module.exports = {
     createDeliveryRequest: async (delivery) => {
         let ok = false;
         try {
-            const resp = await axios.post(process.env.SHIPMENT_SERVICE_URL + '/users/v1/' + chatId + '/login', delivery);
-            ok = resp.data.id ? true : false;
+            const resp = await axios.post(process.env.DELIVERY_SERVICE_URL + '/create-delivery-request', delivery, headers);
+            ok = resp.data.deliveryRequestId ? true : false;
         } catch (err) {
             console.error(err);
         }
@@ -119,7 +124,7 @@ module.exports = {
 
         return ok;
     },
-    setShipper: async (chatId) => {
+    setUserToShipper: async (chatId) => {
         let ok = false;
         try {
             const resp = await axios.post(process.env.USER_SERVICE_URL + '/users/v1/' + chatId + '/shipper');
@@ -131,9 +136,12 @@ module.exports = {
         return ok;
     },
     acceptShipment: async (deliveryRequestId) => {
+
+        //should pass through delivery service
+
         let ok = false;
         try {
-            const resp = await axios.post(process.env.SHIPMENT_SERVICE_URL + '/shipment/v1/shipper' + deliveryRequestId);
+            const resp = await axios.post(process.env.SHIPMENT_SERVICE_URL + '/shipment/v1/' + deliveryRequestId + 'shipper');
             ok = resp.data.isShipper;
         } catch (err) {
             console.error(err);
@@ -141,15 +149,11 @@ module.exports = {
 
         return ok;
     },
-    start: async (chatId, name) => {
+    start: async (loginData) => {
         let ok = false;
         try {
-            const resp = await axios.post(process.env.USER_SERVICE_URL + '/users/v1/' + chatId + '/login',
-                {
-                    name: name
-                }
-            );
-            ok = resp.data.id ? true : false;
+            const resp = await axios.post(process.env.USER_SERVICE_URL + '/users/v1/login', loginData);
+            ok = resp.data.userLoginId ? true : false;
         } catch (err) {
             console.error(err);
         }

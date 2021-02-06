@@ -4,6 +4,7 @@ module.exports = {
     ACCEPT_BUTTON: '✅ Accept',
     CANCEL_MESSAGE: '❌ Operation canceled',
     ERROR_MESSAGE: '❌ Error',
+    NOSHIPPER_MESSAGE: '❌ You are not a shipper',
 
     //becomeShipperWizard
     BSW_ASK_MESSAGE: '📦 Are you sure to become a shipper?',

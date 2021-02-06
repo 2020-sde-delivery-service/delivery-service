@@ -87,6 +87,7 @@ services:
       USER_SERVICE_URL: "http://auth-service:8070"
       SHIPMENT_SERVICE_URL: "http://shipment-service:8090"
       GOOGLEMAP_SERVICE_URL: "http://google-maps-adapter:8080"
+      DELIVERY_SERVICE_URL: "http://delivery-service:8080"
   status-service:
     build:
       context: ./status-service

@@ -3,16 +3,18 @@ const router = new express.Router();
 
 const shipmentController = require('../controllers/shipmentController');
 
+/*
 router.post('/create', shipmentController.create);
 router.get('/getOne/:id', shipmentController.getOne);
-router.post('/assign-shipper/:deliveryRequestId', shipmentController.assignShipper);
+router.post('/assign-shipper/:deliveryRequestId', shipmentController.setShipper);
 router.post('/accept-request', shipmentController.acceptRequest);
-
+*/
 //---------------------------
-router.post('/shipment/v1/new', shipmentController.create);
-router.get('/shipment/v1/:deliveryRequestId', shipmentController.getOne);
-router.post('/shipment/v1/shipper/:deliveryRequestId', shipmentController.assignShipper);
-router.post('/shipment/v1/pickup/:deliveryRequestId', shipmentController.pickupStatus);
-router.post('/shipment/v1/deliver/:deliveryRequestId', shipmentController.deliverStatus);
+router.post('/shipment/v1/deliveryRequest', shipmentController.create);
+router.get('/shipment/v1/deliveryRequest/ofshipper/:shipperId', shipmentController.getShipmentsOfShipper);
+router.get('/shipment/v1/deliveryRequest/:deliveryRequestId', shipmentController.getOne);
+router.post('/shipment/v1/deliveryRequest/:deliveryRequestId/shipper', shipmentController.setShipper);
+router.post('/shipment/v1/deliveryRequest/:deliveryRequestId/pickup', shipmentController.setPickupStatus);
+router.post('/shipment/v1/deliveryRequest/:deliveryRequestId/deliver', shipmentController.setDeliverStatus);
 
 module.exports = router;

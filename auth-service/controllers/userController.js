@@ -1,5 +1,9 @@
 const axios = require('axios');
 
+const headers = {
+    "Content-Type": "application/json"
+}
+
 const newAuthToken = async function (user) {
     let signOptions = {
         expiresIn: "30d",
@@ -26,32 +30,44 @@ module.exports = {
     },
     */
     login: async (req, res) => {
-        const id = req.params.id;
+        const id = req.body.id;
+        const firstName = req.body.firstName;
+        const lastName = req.body.lastName;
 
         if (!id) {
             return res.status(400).send();
         }
 
+        let userLogin;
         try {
-            let user = {};
             // SEARCH USER WITH chatId
-            const resp = await axios.get(process.env.DATA_SERVICE_URL + '/users', {
-                params: { id: id }
-            });
-
-            user = resp.data.user;
-
-            if (!user) {
-                //SAVE USER
-                const resp = await axios.post(process.env.DATA_SERVICE_URL + '/users', {
-                });
-
-                res.send(resp.data.user);
-            }
+            const resp = await axios.get(process.env.DATA_SERVICE_URL + '/userLogins/' + id);
+            userLogin = resp.data;
         } catch (error) {
-            console.log(error);
-            res.status(500).send({ error });
+            //console.log(error);
         }
+
+        if (!userLogin) {
+            //SAVE USER
+            try {
+                const partyRes = await axios.post(process.env.DATA_SERVICE_URL + '/parties', headers);
+                party = partyRes.data;
+                await axios.post(process.env.DATA_SERVICE_URL + '/persons', {
+                    partyId: party.partyId,
+                    firstName: firstName,
+                    lastName: lastName
+                }, headers);
+                const userLoginResp = await axios.post(process.env.DATA_SERVICE_URL + '/userLogins', {
+                    userLoginId: id,
+                    partyId: party.partyId
+                }, headers);
+                userLogin = userLoginResp.data;
+            } catch (error) {
+                console.log(error);
+                res.status(500).send({ error });
+            }
+        }
+        res.send(userLogin);
     },
     setShipper: async (req, res) => {
         const id = req.params.id;
@@ -60,12 +76,23 @@ module.exports = {
             return res.status(400).send();
         }
 
+        let userLogin;
+
         try {
-            const resp = await axios.post(process.env.DATA_SERVICE_URL + '/users', {
-            });
+            // SEARCH USER WITH chatId
+            const userResponse = await axios.get(process.env.DATA_SERVICE_URL + '/userLogins/' + id);
+            userLogin = userResponse.data;
+        } catch (error) {
+            return res.status(404).send();
+            //console.log(error);
+        }
 
-            res.send({ isShipper: resp.data.user.isShipper });
-
+        try {
+            const shipperResponse = await axios.post(process.env.DATA_SERVICE_URL + '/shippers', {
+                shipperId: userLogin.partyId,
+                currentLocation: "none"
+            }, headers);
+            res.send({ isShipper: true });
         } catch (error) {
             console.log(error);
             res.status(500).send({ error });
@@ -78,13 +105,20 @@ module.exports = {
             return res.status(400).send();
         }
 
+        let userLogin;
+
         try {
-            const resp = await axios.get(process.env.DATA_SERVICE_URL + '/users', {
-                params: { id: id }
-            });
+            // SEARCH USER WITH chatId
+            const userResponse = await axios.get(process.env.DATA_SERVICE_URL + '/userLogins/' + id);
+            userLogin = userResponse.data;
+        } catch (error) {
+            return res.status(404).send();
+            //console.log(error);
+        }
 
-            res.send({ isShipper: resp.data.user.isShipper });
-
+        try {
+            await axios.get(process.env.DATA_SERVICE_URL + '/shippers/' + userLogin.partyId);
+            res.send({ isShipper: true });
         } catch (error) {
             console.log(error);
             res.status(500).send({ error });

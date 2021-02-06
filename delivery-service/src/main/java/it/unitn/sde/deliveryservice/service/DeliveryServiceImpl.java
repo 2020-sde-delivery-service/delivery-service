@@ -70,7 +70,7 @@ public class DeliveryServiceImpl implements DeliveryService {
             Map<String, String> body = new HashMap<>();
             body.put("assignedShipperId", candidates.getData().get(i));
             DeliveryRequestModel re = restTemplate.postForObject(
-                    shimentServiceUrl + ApiConstant.ASSIGN_SHIPPER_API +"/"+ deliveryModel.getDeliveryRquestId().toString(),
+                    shimentServiceUrl + ApiConstant.ASSIGN_SHIPPER_API_0 +"/"+ deliveryModel.getDeliveryRquestId().toString() + ApiConstant.ASSIGN_SHIPPER_API_1,
                     body, DeliveryRequestModel.class);
             try {
                 Thread.sleep(50000);
