@@ -1,5 +1,5 @@
 package it.unitn.sde.entity;
-import java.util.Date;
+
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -8,12 +8,13 @@ import javax.persistence.Id;
 
 import lombok.Getter;
 import lombok.Setter;
+
 @Entity
 @Getter
 @Setter
 public class Shipper {
     @Id
-    @Column(name="shipper_id")
+    @Column(name = "shipper_id")
     private UUID shipperId;
     private String currentLocation;
 

@@ -30,11 +30,14 @@ public class DeliveryRequest {
     private String pickupAddress;
     private String deliveryAddress;
     private String unit;
+    private double weight;
+    private double quantity;
     private String customerPhoneNumber;
     private String pickupLocation;
     private String deliveryLocation;
     private String statusId;
     private UUID assignedShipperId;
+    private UUID customerId;
     @CreatedDate
     private Date createdDate;
     @LastModifiedDate

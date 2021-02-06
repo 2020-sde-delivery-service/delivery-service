@@ -1,26 +1,26 @@
 package it.unitn.sde.entity;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import it.unitn.sde.entity.Status.StatusEnum;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 @Entity
-@Getter
-@Setter
+@Data
 public class Party {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -29,6 +29,7 @@ public class Party {
 
     private String partyCode;
 
+    private String userId;
     private String partyTypeId;
 
     @Column(columnDefinition = "TEXT")
@@ -36,41 +37,15 @@ public class Party {
 
     private String statusId;
 
-    // @JoinColumn(name = "party_id", referencedColumnName = "party_id")
-    // @OneToOne(fetch = FetchType.EAGER, mappedBy = "party")
-    // private UserLogin userLogin;
-
     private boolean isUnread;
-    @JsonIgnore
-    private String createdByUserLogin;
-    @JsonIgnore
-    private String lastModifiedByUserLogin;
 
     private Date createdDate;
 
     private Date lastModifiedDate;
 
-    public Party() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
-
-    public Party(String partyTypeId, String statusId, String createdByUserLogin, String lastModifiedByUserLogin) {
-        this.partyTypeId = partyTypeId;
-        this.statusId = statusId;
-        this.createdByUserLogin = createdByUserLogin;
-        this.lastModifiedByUserLogin = lastModifiedByUserLogin;
-    }
-
-    public Party(String partyCode, String partyTypeId, String statusId, boolean isUnread,
-            String createdByUserLogin, String lastModifiedByUserLogin) {
-        this.partyCode = partyCode;
-        this.partyTypeId = partyTypeId;
-        this.statusId = statusId;
-        this.isUnread = isUnread;
-        this.createdByUserLogin = createdByUserLogin;
-        this.lastModifiedByUserLogin = lastModifiedByUserLogin;
-    }
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "party_security_group", joinColumns = @JoinColumn(name = "party_id", referencedColumnName = "party_id"), inverseJoinColumns = @JoinColumn(name = "group_id", referencedColumnName = "group_id"))
+    private List<SecurityGroup> roles;
 
     @PrePersist
     public void prePersist() {
