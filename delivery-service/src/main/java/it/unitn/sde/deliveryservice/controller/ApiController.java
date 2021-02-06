@@ -34,6 +34,6 @@ public class ApiController {
         res.put("status", "sucess");
         res.put("id", deliveryRequestModel.getDeliveryRquestId().toString());
         return ResponseEntity.ok().body(res);
-    }cd De
+    }
 
 }
