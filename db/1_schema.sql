@@ -123,7 +123,7 @@ CREATE TABLE delivery_request (
 CREATE TABLE trip (
 	  trip_id   UUID NOT NULL ,
 	  created_date      DATE NOT NULL,
-	  current_finished_seq_id      NUMERIC,
+	  current_finished_seq_id NUMERIC NOT NULL default 0,
 	  start_date      DATE,
 	  shipper_id 	UUID NOT NULL,
 	  end_date      DATE,
@@ -139,6 +139,7 @@ CREATE TABLE point (
 	  point_id UUID NOT NULL default uuid_generate_v1(),	
 	  trip_id   UUID ,
 	  seq_id   NUMERIC,
+	  suggestion_seq_id   NUMERIC,
 	  delivery_request_id UUID NOT NULL,
 	  request_type VARCHAR(60) NOT NULL, -- pickup/ delivery
 	  lat	NUMERIC NOT NULL,
