@@ -12,6 +12,8 @@ googlemapservice:
 shipperassignmentservice:
   url: ${SHIPPER_ASSIGNMENT_SERVICE_URL}
 
+tripservice:
+  url: ${TRIP_SERVICE_URL}
 logging:
   file:
     path: logs

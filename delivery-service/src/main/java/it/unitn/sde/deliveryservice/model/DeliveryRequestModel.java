@@ -16,6 +16,7 @@ public class DeliveryRequestModel {
     private double quantity;
     private double weight;
     private String customerPhoneNumber;
+    private UUID assignedShipperId;
     private String pickupLocation;
     private String deliveryLocation;
     private String statusId;
