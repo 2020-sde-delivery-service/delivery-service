@@ -3,37 +3,35 @@ package it.unitn.sde.entity;
 import java.util.Date;
 import java.util.UUID;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import it.unitn.sde.entity.Status.StatusEnum;
 import lombok.Data;
 
 @Data
 @Entity
-@IdClass(PointId.class)
 public class Point {
     @Id
-    private UUID tripId;
-    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID pointId;
     private int seqId;
-    private UUID requestId;
-    private String type;
-
+    private UUID deliveryRequestId;
+    private String requestType;
     private double lat;
     private double lng;
     private Date assignTime;
     private String statusId;
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "tripId", insertable = false, updatable = false)
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "trip_id")
     private Trip trip;
+
     @PrePersist
     public void prePersist() {
         if (statusId == null) {

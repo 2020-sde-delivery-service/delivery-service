@@ -7,8 +7,10 @@ import org.springframework.stereotype.Component;
 import it.unitn.sde.entity.DeliveryRequest;
 import it.unitn.sde.entity.Party;
 import it.unitn.sde.entity.Person;
+import it.unitn.sde.entity.Point;
 import it.unitn.sde.entity.SecurityGroup;
 import it.unitn.sde.entity.Status;
+import it.unitn.sde.entity.Trip;
 import it.unitn.sde.entity.UserLogin;
 @Component
 public class SpringRestConfiguration implements RepositoryRestConfigurer {
@@ -22,5 +24,7 @@ public class SpringRestConfiguration implements RepositoryRestConfigurer {
         restConfig.exposeIdsFor(Person.class);
         restConfig.exposeIdsFor(UserLogin.class);
         restConfig.exposeIdsFor(SecurityGroup.class);
+        restConfig.exposeIdsFor(Trip.class);
+        restConfig.exposeIdsFor(Point.class);
     }
 }

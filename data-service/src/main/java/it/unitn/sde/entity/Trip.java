@@ -33,9 +33,7 @@ public class Trip {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "trip_id")
     private UUID tripId;
-    @JoinColumn(name = "status_id", referencedColumnName = "status_id")
-    @ManyToOne(fetch = FetchType.EAGER)
-    private Status status;
+    private String statusId;
     @CreatedDate
     private Date createdDate;
     @CreatedDate
@@ -48,8 +46,8 @@ public class Trip {
 
     @PrePersist
     public void prePersist() {
-        if (status == null) {
-            status = new Status(StatusEnum.TRIP_CREATED.name());
+        if (statusId == null) {
+            statusId = StatusEnum.TRIP_CREATED.name();
         }
     }
 
