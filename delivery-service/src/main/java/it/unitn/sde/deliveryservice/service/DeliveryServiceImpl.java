@@ -42,12 +42,13 @@ public class DeliveryServiceImpl implements DeliveryService {
         GeoCodeModel geoCodeDelivery = restTemplate.getForObject(
                 googlemapservice + ApiConstant.GEOCODE_API + "?address=" + deliveryModel.getDeliveryAddress(),
                 GeoCodeModel.class);
+        deliveryModel
+                .setPickupLocation(geoCodePickup.getLocation().getLat() + "," + geoCodePickup.getLocation().getLng());
+        deliveryModel.setDeliveryLocation(
+                geoCodeDelivery.getLocation().getLat() + "," + geoCodeDelivery.getLocation().getLng());
+        log.info(deliveryModel.toString());
         DeliveryRequestModel request = restTemplate.postForObject(shimentServiceUrl + ApiConstant.CREATE_DELIVERY_REQUEST_API,
                 deliveryModel, DeliveryRequestModel.class);
-        request
-                .setPickupLocation(geoCodePickup.getLocation().getLat() + "," + geoCodePickup.getLocation().getLng());
-        request.setDeliveryLocation(
-                geoCodeDelivery.getLocation().getLat() + "," + geoCodeDelivery.getLocation().getLng());
         log.info(request.toString());
         return request;
     }
@@ -66,7 +67,6 @@ public class DeliveryServiceImpl implements DeliveryService {
                 requestModel, ListCandidateModel.class);
         for (int i = 0; i < candidates.getData().size(); i++) {
             log.info("start " + i);
-
             Map<String, String> body = new HashMap<>();
             body.put("assignedShipperId", candidates.getData().get(i));
             DeliveryRequestModel re = restTemplate.postForObject(
@@ -83,6 +83,7 @@ public class DeliveryServiceImpl implements DeliveryService {
                     + deliveryModel.getDeliveryRequestId().toString(), DeliveryRequestModel.class);
             if (StatusEnum.DELIVERY_REQUEST_ACCEPTED.name().equals(re.getStatusId())) {
                 log.info("assignment process completed");
+                
                 break;
             }
         }
