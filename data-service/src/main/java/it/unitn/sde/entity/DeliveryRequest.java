@@ -25,7 +25,7 @@ public class DeliveryRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "delivery_request_id")
-    private UUID deliveryRquestId;
+    private UUID deliveryRequestId;
 
     private String pickupAddress;
     private String deliveryAddress;

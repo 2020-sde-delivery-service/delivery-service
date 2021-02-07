@@ -7,10 +7,14 @@ import java.util.UUID;
 import lombok.Data;
 @Data
 public class DeliveryRequestModel {
-    private UUID deliveryRquestId;
+    private UUID deliveryRequestId;
+
+    private UUID customerId;
     private String pickupAddress;
     private String deliveryAddress;
     private String unit;
+    private double quantity;
+    private double weight;
     private String customerPhoneNumber;
     private String pickupLocation;
     private String deliveryLocation;

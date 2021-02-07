@@ -111,6 +111,7 @@ module.exports = {
             console.error(err);
         }
 
+
         return ok;
     },
     checkShipper: async (chatId) => {
@@ -153,11 +154,22 @@ module.exports = {
         let ok = false;
         try {
             const resp = await axios.post(process.env.USER_SERVICE_URL + '/users/v1/login', loginData);
-            ok = resp.data.userLoginId ? true : false;
+            ok = resp.data.userId ? true : false;
         } catch (err) {
             console.error(err);
         }
 
         return ok;
+    },
+    getCustomerId: async (chatId) => {
+        let id;
+        try {
+            const resp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/' + chatId);
+            id = resp.data.partyId;
+        } catch (err) {
+            console.error(err);
+        }
+
+        return id;
     },
 }

@@ -7,7 +7,7 @@ const step1Handler = new Composer();
 
 step1Handler.action('accept', async (ctx) => {
     //send shipper
-    const ok = await setShipper(ctx.from.id);
+    const ok = await setUserToShipper(ctx.from.id);
     await ctx.editMessageText(strings.BSW_ASK_MESSAGE);
     if (ok) {
         ctx.reply(strings.BSW_ACCEPT_MESSAGE, Markup
@@ -15,7 +15,7 @@ step1Handler.action('accept', async (ctx) => {
             .resize()
         );
     } else {
-        ctx.reply(ERROR_MESSAGE);
+        ctx.reply(strings.ERROR_MESSAGE);
     }
     return await ctx.scene.leave();
 });
@@ -34,7 +34,7 @@ step1Handler.command('accept', async (ctx) => {
             .resize()
         );
     } else {
-        ctx.reply(ERROR_MESSAGE);
+        ctx.reply(strings.ERROR_MESSAGE);
     }
     return await ctx.scene.leave();
 });

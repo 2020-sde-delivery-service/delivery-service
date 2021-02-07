@@ -32,7 +32,7 @@ public class ApiController {
         deliveryService.processDeliveryRequest(deliveryRequestModel);
         Map<String,String> res=new HashMap<>();
         res.put("status", "sucess");
-        res.put("id", deliveryRequestModel.getDeliveryRquestId().toString());
+        res.put("deliveryRequestId", deliveryRequestModel.getDeliveryRequestId().toString());
         return ResponseEntity.ok().body(res);
     }
 

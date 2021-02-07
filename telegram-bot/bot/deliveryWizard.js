@@ -1,6 +1,7 @@
 const { Composer, Markup, Scenes, session, Telegraf } = require('telegraf');
 
 const strings = require('../constant/strings');
+const { getCorrectAddress, createDeliveryRequest, getCustomerId } = require('./helpers');
 
 const step1Handler = new Composer();
 const step2Handler = new Composer();
@@ -15,8 +16,6 @@ let destination_address = '';
 let phone_number = '';
 let quantity = '';
 let weight = '';
-
-const getCorrectAddress = require('./helpers').getCorrectAddress;
 
 step1Handler.action('next', async (ctx) => {
     await ctx.editMessageText(strings.DW_DELIVERY_REQUEST);
@@ -103,35 +102,49 @@ step42Handler.on('text', async (ctx) => {
 
 step5Handler.action('accept', async (ctx) => {
     //send order
-    const data = {
-        pickupAddress: start_address,
-        deliveryAddress: destination_address,
-        unit: "Kg",
-        customerPhoneNumber: phone_number
+    let id = await getCustomerId(ctx.from.id);
+    let ok = false;
+    if (id) {
+        const data = {
+            customerId: id,
+            pickupAddress: start_address,
+            deliveryAddress: destination_address,
+            unit: "Kg",
+            customerPhoneNumber: phone_number,
+            quantity: parseFloat(quantity),
+            weight: parseFloat(weight)
+        }
+        ok = await createDeliveryRequest(data);
     }
-    let ok = await createDeliveryRequest(data);
     await ctx.editMessageText(strings.DW_RECAP_MESSAGE(start_address, destination_address, phone_number, quantity, weight));
     if (ok) {
         ctx.reply(strings.DW_ACCEPT_MESSAGE);
     } else {
-        ctx.reply(ERROR_MESSAGE);
+        ctx.reply(strings.ERROR_MESSAGE);
     }
     return await ctx.scene.leave();
 });
 step5Handler.command('accept', async (ctx) => {
     //send order
-    const data = {
-        pickupAddress: start_address,
-        deliveryAddress: destination_address,
-        unit: "Kg",
-        customerPhoneNumber: phone_number
+    let id = await getCustomerId(ctx.from.id);
+    let ok = false;
+    if (id) {
+        const data = {
+            customerId: id,
+            pickupAddress: start_address,
+            deliveryAddress: destination_address,
+            unit: "Kg",
+            customerPhoneNumber: phone_number,
+            quantity: parseFloat(quantity),
+            weight: parseFloat(weight)
+        }
+        ok = await createDeliveryRequest(data);
     }
-    let ok = await createDeliveryRequest(data);
     await ctx.editMessageText(strings.DW_RECAP_MESSAGE(start_address, destination_address, phone_number, quantity, weight));
     if (ok) {
         ctx.reply(strings.DW_ACCEPT_MESSAGE);
     } else {
-        ctx.reply(ERROR_MESSAGE);
+        ctx.reply(strings.ERROR_MESSAGE);
     }
     return await ctx.scene.leave();
 });

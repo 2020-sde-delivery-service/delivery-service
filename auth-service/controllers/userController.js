@@ -1,4 +1,5 @@
 const axios = require('axios');
+const { CUSTOMER, SHIPPER } = require('../constants/rolesStrings');
 
 const headers = {
     "Content-Type": "application/json"
@@ -38,36 +39,45 @@ module.exports = {
             return res.status(400).send();
         }
 
-        let userLogin;
+        let party;
         try {
             // SEARCH USER WITH chatId
-            const resp = await axios.get(process.env.DATA_SERVICE_URL + '/userLogins/' + id);
-            userLogin = resp.data;
+            const resp = await axios.get(process.env.DATA_SERVICE_URL + '/parties/search/findByUserId', {
+                params: {
+                    userId: id
+                }
+            });
+            party = resp.data;
         } catch (error) {
             //console.log(error);
         }
 
-        if (!userLogin) {
+        if (!party) {
             //SAVE USER
             try {
-                const partyRes = await axios.post(process.env.DATA_SERVICE_URL + '/parties', headers);
+                const partyRes = await axios.post(process.env.DATA_SERVICE_URL + '/parties', {
+                    userId: id
+                }, headers);
                 party = partyRes.data;
                 await axios.post(process.env.DATA_SERVICE_URL + '/persons', {
                     partyId: party.partyId,
                     firstName: firstName,
                     lastName: lastName
                 }, headers);
-                const userLoginResp = await axios.post(process.env.DATA_SERVICE_URL + '/userLogins', {
-                    userLoginId: id,
-                    partyId: party.partyId
+                await axios.post(process.env.DATA_SERVICE_URL + '/partySecurityGroups', {
+                    partyId: party.partyId,
+                    groupId: CUSTOMER
                 }, headers);
-                userLogin = userLoginResp.data;
+                await axios.post(process.env.DATA_SERVICE_URL + '/customers', {
+                    customerId: party.partyId,
+                    currentLocation: "null"
+                }, headers);
             } catch (error) {
                 console.log(error);
                 res.status(500).send({ error });
             }
         }
-        res.send(userLogin);
+        res.send(party);
     },
     setShipper: async (req, res) => {
         const id = req.params.id;
@@ -76,21 +86,27 @@ module.exports = {
             return res.status(400).send();
         }
 
-        let userLogin;
-
+        let party;
         try {
             // SEARCH USER WITH chatId
-            const userResponse = await axios.get(process.env.DATA_SERVICE_URL + '/userLogins/' + id);
-            userLogin = userResponse.data;
+            const resp = await axios.get(process.env.DATA_SERVICE_URL + '/parties/search/findByUserId', {
+                params: {
+                    userId: id
+                }
+            });
+            party = resp.data;
         } catch (error) {
-            return res.status(404).send();
             //console.log(error);
         }
 
         try {
-            const shipperResponse = await axios.post(process.env.DATA_SERVICE_URL + '/shippers', {
-                shipperId: userLogin.partyId,
-                currentLocation: "none"
+            await axios.post(process.env.DATA_SERVICE_URL + '/partySecurityGroups', {
+                partyId: party.partyId,
+                groupId: SHIPPER
+            }, headers);
+            await axios.post(process.env.DATA_SERVICE_URL + '/shippers', {
+                shipperId: party.partyId,
+                currentLocation: "null"
             }, headers);
             res.send({ isShipper: true });
         } catch (error) {
@@ -105,20 +121,41 @@ module.exports = {
             return res.status(400).send();
         }
 
-        let userLogin;
-
+        let party;
         try {
             // SEARCH USER WITH chatId
-            const userResponse = await axios.get(process.env.DATA_SERVICE_URL + '/userLogins/' + id);
-            userLogin = userResponse.data;
+            const resp = await axios.get(process.env.DATA_SERVICE_URL + '/parties/search/findByUserId', {
+                params: {
+                    userId: id
+                }
+            });
+            party = resp.data;
         } catch (error) {
-            return res.status(404).send();
             //console.log(error);
         }
 
         try {
-            await axios.get(process.env.DATA_SERVICE_URL + '/shippers/' + userLogin.partyId);
+            await axios.get(process.env.DATA_SERVICE_URL + '/shippers/' + party.partyId);
             res.send({ isShipper: true });
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({ error });
+        }
+    },
+    getOne: async (req, res) => {
+        const id = req.params.id;
+
+        if (!id) {
+            return res.status(400).send();
+        }
+
+        try {
+            const resp = await axios.get(process.env.DATA_SERVICE_URL + '/parties/search/findByUserId', {
+                params: {
+                    userId: id
+                }
+            });
+            res.send(resp.data);
         } catch (error) {
             console.log(error);
             res.status(500).send({ error });

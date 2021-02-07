@@ -11,7 +11,7 @@ module.exports = {
     create: async (req, res) => {
         console.log(req.body);
         try {
-            const resp = await axios.post(process.env.DATA_SERVICE_URL + DELIVERY_REQUEST_API, req.body);
+            const resp = await axios.post(process.env.DATA_SERVICE_URL + DELIVERY_REQUEST_API, req.body, headers);
             console.log(resp.data);
             res.send(resp.data);
         } catch (err) {

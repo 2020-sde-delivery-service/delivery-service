@@ -1,0 +1,5 @@
+module.exports = {
+    ADMIN: "ROLE_FULL_ADMIN",
+    CUSTOMER: "ROLE_CUSTOMER",
+    SHIPPER: "ROLE_SHIPPER"
+}

@@ -70,7 +70,7 @@ public class DeliveryServiceImpl implements DeliveryService {
             Map<String, String> body = new HashMap<>();
             body.put("assignedShipperId", candidates.getData().get(i));
             DeliveryRequestModel re = restTemplate.postForObject(
-                    shimentServiceUrl + ApiConstant.ASSIGN_SHIPPER_API_0 +"/"+ deliveryModel.getDeliveryRquestId().toString() + ApiConstant.ASSIGN_SHIPPER_API_1,
+                    shimentServiceUrl + ApiConstant.ASSIGN_SHIPPER_API_0 +"/"+ deliveryModel.getDeliveryRequestId().toString() + ApiConstant.ASSIGN_SHIPPER_API_1,
                     body, DeliveryRequestModel.class);
             try {
                 Thread.sleep(50000);
@@ -80,7 +80,7 @@ public class DeliveryServiceImpl implements DeliveryService {
             }
             log.info("end "+i);            
             re = restTemplate.getForObject(shimentServiceUrl + ApiConstant.GET_DELIVERY_REQUEST_API + "/"
-                    + deliveryModel.getDeliveryRquestId().toString(), DeliveryRequestModel.class);
+                    + deliveryModel.getDeliveryRequestId().toString(), DeliveryRequestModel.class);
             if (StatusEnum.DELIVERY_REQUEST_ACCEPTED.name().equals(re.getStatusId())) {
                 log.info("assignment process completed");
                 break;
