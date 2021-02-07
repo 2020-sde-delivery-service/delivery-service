@@ -69,6 +69,13 @@ services:
       DATA_SERVICE_URL: "http://data-service:8080"
       LOCATION_SERVICE_URL: "http://location-service:8080"
       RADIUS_LIMIT: "200km"
+  trip-service:
+    build:
+      context: ./trip-service
+    ports:
+      - 8085:8080
+    environment:
+      DATA_SERVICE_URL: "http://data-service:8080"
   delivery-service:
     build:
       context: ./delivery-service
@@ -78,6 +85,10 @@ services:
       SHIPMENT_SERVICE_URL: "http://shipment-service:8090"
       GOOGLEMAP_SERVICE_URL: "http://google-maps-adapter:8080"
       SHIPPER_ASSIGNMENT_SERVICE_URL: "http://shipper-assignment-service:8080"
+      TRIP_SERVICE_URL: "http://trip-service:8080"
+      MAXIMUM_WAIT_TIME: 50000
+
+      
   telegram-bot:
     build:
       context: ./telegram-bot
