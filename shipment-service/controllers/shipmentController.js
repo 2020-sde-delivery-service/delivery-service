@@ -57,6 +57,7 @@ module.exports = {
     setShipper: async (req, res) => {
         const deliveryRequestId = req.params.deliveryRequestId;
         const shipperId = req.body.shipperId;
+        console.log(deliveryRequestId+"-"+shipperId);
 
         if (!(deliveryRequestId && shipperId)) {
             res.status(400).send();
@@ -72,7 +73,7 @@ module.exports = {
 
             const data = {
                 assignedShipperId: shipperId,
-                statusId: DELIVERY_STATUS_ACCEPTED
+  //              statusId: statusStrings.DELIVERY_STATUS_ACCEPTED
             }
 
             const resp = await axios.patch(process.env.DATA_SERVICE_URL + DELIVERY_REQUEST_API + "/" + deliveryRequestId, data, headers);
