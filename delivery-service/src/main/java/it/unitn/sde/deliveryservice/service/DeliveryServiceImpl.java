@@ -41,6 +41,8 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     @Value("${tripservice.url}")
     private String tripServiceUrl;
+    @Value("${maximumwaittime}")
+    private long maximumWaitTime;
     @Override
     public DeliveryRequestModel createDeliveryRequest(DeliveryRequestInputModel deliveryModel) {
         GeoCodeModel geoCodePickup = restTemplate.getForObject(
@@ -80,7 +82,7 @@ public class DeliveryServiceImpl implements DeliveryService {
                     shimentServiceUrl + ApiConstant.ASSIGN_SHIPPER_API_0 +"/"+ deliveryModel.getDeliveryRequestId().toString() + ApiConstant.ASSIGN_SHIPPER_API_1,
                     body, DeliveryRequestModel.class);
             try {
-                Thread.sleep(50000);
+                Thread.sleep(maximumWaitTime);
             } catch (InterruptedException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();

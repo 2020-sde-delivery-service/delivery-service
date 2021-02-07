@@ -14,6 +14,7 @@ shipperassignmentservice:
 
 tripservice:
   url: ${TRIP_SERVICE_URL}
+maximumwaittime: ${MAXIMUM_WAIT_TIME}
 logging:
   file:
     path: logs
