@@ -137,7 +137,7 @@ CREATE TABLE trip (
 
 CREATE TABLE point (
 	  point_id UUID NOT NULL default uuid_generate_v1(),	
-	  trip_id   UUID NOT NULL ,
+	  trip_id   UUID ,
 	  seq_id   NUMERIC,
 	  delivery_request_id UUID NOT NULL,
 	  request_type VARCHAR(60) NOT NULL, -- pickup/ delivery
