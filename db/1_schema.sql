@@ -125,22 +125,14 @@ CREATE TABLE trip (
 	  created_date      DATE NOT NULL,
 	  current_finished_seq_id      NUMERIC,
 	  start_date      DATE,
+	  shipper_id 	UUID NOT NULL,
 	  end_date      DATE,
 	  status_id        VARCHAR(60) NOT NULL,
 	  last_updated_stamp TIMESTAMP   ,
 	  created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	  CONSTRAINT pk_trip PRIMARY KEY (trip_id),
-	  CONSTRAINT fk_trip_status FOREIGN KEY (status_id) REFERENCES status (status_id)
-);
-
-CREATE TABLE shipper_trip (
-	  shipper_id      UUID NOT NULL,
-	  trip_id           UUID NOT NULL,
-	  last_updated_stamp TIMESTAMP    ,
-	  created_stamp      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	  CONSTRAINT pk_shipper_trip PRIMARY KEY (shipper_id, trip_id),
-	  CONSTRAINT shipper_trip_grp FOREIGN KEY (shipper_id) REFERENCES shipper (shipper_id),
-	  CONSTRAINT shipper_trip_trp FOREIGN KEY (trip_id) REFERENCES trip (trip_id)
+	  CONSTRAINT fk_trip_status FOREIGN KEY (status_id) REFERENCES status (status_id),
+	  CONSTRAINT fk_trip_shipper FOREIGN KEY (shipper_id) REFERENCES shipper (shipper_id)
 );
 
 CREATE TABLE point (
