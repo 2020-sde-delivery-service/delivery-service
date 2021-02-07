@@ -1,22 +1,39 @@
 const axios = require('axios');
 let dotenv = require('dotenv');
+const statusStrings = require('../constants/statusStrings');
+const headers = {
+    "Content-Type": "application/json"
+};
 
 dotenv.config();
 
 module.exports = {
-    getOne: async (req, res) => {
-        const id = req.params.id;
+    setPickupStatus: async (req, res) => {
+        const deliveryRequestId = req.params.deliveryRequestId;
 
-        if (!id) {
-            return res.status(400).send();
-        }
+        const data = { "statusId": statusStrings.DELIVERY_STATUS_PROCESSING }
+
+
+        //***REQUEST ACCEPTED
+        // SET STATUS IN DELIVERY REQUEST (DELIVERYREQUESTID, PICKUP) - SHIPMENT-SERVICE
+        //CREATE TRIP (SHIPPERID) OR (USE) PRESENT FOR ONLINE UPDATE) - TRIP-SERVICE
+        //CREATE RELATION SHIPPER TRIP OR (USE PRESENT FOR ONLINE UPDATE) - TRIP-SERVICE
+        //CREATE POINTS (DELIVERYREQUESTID, PICKUP, TRIPID, TRIPSEQUENCE + 1) - TRIP-SERVICE
+        //CREATE POINTS (DELIVERYREQUESTID, DELIVER, TRIPID, TRIPSEQUENCE + 2) - TRIP-SERVICE
+
+        //***PICKUP
+        // SET STATUS IN DELIVERY REQUEST (DELIVERYREQUESTID, PICKUP) - SHIPMENT-SERVICE
+        // SET STATUS IN POINT (DELIVERYREQUESTID, PICKUP, DONE) - TRIP-SERVICE
+        // SET STATUS IN TRIP (TRIPSEQUENCE++) - TRIP-SERVICE
+
+        //***DELIVERY
+        // SET STATUS IN DELIVERY REQUEST (DELIVERYREQUESTID, DELIVER) - SHIPMENT-SERVICE
+        // SET STATUS IN POINT (DELIVERYREQUESTID, DELIVER, DONE) - TRIP-SERVICE
+        // SET STATUS IN TRIP (TRIPSEQUENCE++, IF(NO_OTHER_POINTS_IN_TRIP): TRIP_DONE) - TRIP-SERVICE
+
 
         try {
-            const resp = await axios.get('https://url', {
-                params: {
-                    id: id
-                }
-            });
+            const resp = await axios.patch(process.env.SHIPMENT_SERVICE_URL + "/deliveryRequest/" + deliveryRequestId + "/status", data, headers);
             console.log(resp.data);
             res.send(resp.data);
         } catch (err) {
@@ -24,85 +41,18 @@ module.exports = {
             res.status(500).send()
         }
     },
-    getSingularDistance: async (req, res) => {
-        const origin = req.query.origin;
-        const destination = req.query.destination;
+    setDeliverStatus: async (req, res) => {
+        const deliveryRequestId = req.params.deliveryRequestId;
 
-        if (!(origin && destination)) {
-            return res.status(400).send();
-        }
+        const data = { "statusId": statusStrings.DELIVERY_STATUS_DELIVERED }
 
         try {
-            const resp = await axios.get('https://maps.googleapis.com/maps/api/distancematrix/json', {
-                params: {
-                    origins: origin,
-                    destinations: destination,
-                    key: process.env.GOOGLE_KEY
-                }
-            });
-
-            const mydata = {
-                distance: resp.data.rows[0].elements[0].distance.value,
-                duration: resp.data.rows[0].elements[0].duration.value
-            }
-
-            res.send(mydata);
+            const resp = await axios.post(process.env.SHIPMENT_SERVICE_URL + "/deliveryRequest/" + deliveryRequestId + "/status", data, headers);
+            console.log(resp.data);
+            res.send(resp.data);
         } catch (err) {
             console.error(err);
             res.status(500).send()
         }
     },
-    getMatrix: async (req, res) => {
-        const origins = req.query.origins;
-        const destinations = req.query.destinations;
-
-        if (!(origins && destinations)) {
-            return res.status(400).send();
-        }
-
-        try {
-            const resp = await axios.get('https://maps.googleapis.com/maps/api/distancematrix/json', {
-                params: {
-                    origins: origins,
-                    destinations: destinations,
-                    key: process.env.GOOGLE_KEY
-                }
-            });
-
-            const mydata = {
-                rows: resp.data.rows
-            }
-
-            res.send(mydata);
-        } catch (err) {
-            console.error(err);
-            res.status(500).send()
-        }
-    },
-    getCoordinates: async (req, res) => {
-        const address = req.query.address;
-
-        if (!address) {
-            return res.status(400).send();
-        }
-
-        try {
-            const resp = await axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
-                params: {
-                    address: address,
-                    key: process.env.GOOGLE_KEY
-                }
-            });
-
-            const mydata = {
-                address: resp.data.results[0].formatted_address,
-                location: resp.data.results[0].geometry.location
-            }
-
-            res.send(mydata);
-        } catch (err) {
-            console.error(err);
-            res.status(500).send()
-        }
-    }
 }

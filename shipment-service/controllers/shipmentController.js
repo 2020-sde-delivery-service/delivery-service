@@ -41,10 +41,6 @@ module.exports = {
     getOne: async (req, res) => {
         const deliveryRequestId = req.params.deliveryRequestId;
 
-        if (!deliveryRequestId) {
-            res.status(400).send();
-        }
-
         try {
             const deliveryResp = await axios.get(process.env.DATA_SERVICE_URL + DELIVERY_REQUEST_API + "/" + deliveryRequestId);
 
@@ -57,9 +53,9 @@ module.exports = {
     setShipper: async (req, res) => {
         const deliveryRequestId = req.params.deliveryRequestId;
         const shipperId = req.body.shipperId;
-        console.log(deliveryRequestId+"-"+shipperId);
+        console.log(deliveryRequestId + "-" + shipperId);
 
-        if (!(deliveryRequestId && shipperId)) {
+        if (!shipperId) {
             res.status(400).send();
         }
 
@@ -72,8 +68,7 @@ module.exports = {
             }
 
             const data = {
-                assignedShipperId: shipperId,
-  //              statusId: statusStrings.DELIVERY_STATUS_ACCEPTED
+                assignedShipperId: shipperId
             }
 
             const resp = await axios.patch(process.env.DATA_SERVICE_URL + DELIVERY_REQUEST_API + "/" + deliveryRequestId, data, headers);
@@ -84,37 +79,19 @@ module.exports = {
             res.status(500).send()
         }
     },
-    setPickupStatus: async (req, res) => {
+    setStatus: async (req, res) => {
         const deliveryRequestId = req.params.deliveryRequestId;
+        const statusId = req.body.statusId;
 
-        if (!deliveryRequestId) {
+        if (!statusId) {
             res.status(400).send();
         }
 
         //check correct status
-        const data = { "statusId": statusStrings.DELIVERY_STATUS_PROCESSING }
+        const data = { "statusId": statusId }
 
         try {
             const resp = await axios.patch(process.env.DATA_SERVICE_URL + DELIVERY_REQUEST_API + "/" + deliveryRequestId, data, headers);
-            console.log(resp.data);
-            res.send(resp.data);
-        } catch (err) {
-            console.error(err);
-            res.status(500).send()
-        }
-    },
-    setDeliverStatus: async (req, res) => {
-        const deliveryRequestId = req.params.deliveryRequestId;
-
-        if (!deliveryRequestId) {
-            res.status(400).send();
-        }
-
-        //check correct status
-        const body = { "statusId": statusStrings.DELIVERY_STATUS_DELIVERED }
-
-        try {
-            const resp = await axios.patch(process.env.DATA_SERVICE_URL + DELIVERY_REQUEST_API + "/" + deliveryRequestId, body);
             console.log(resp.data);
             res.send(resp.data);
         } catch (err) {

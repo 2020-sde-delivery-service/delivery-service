@@ -46,6 +46,7 @@ module.exports = {
     BC_ASK_MESSAGE: '📦 New shipment available',
     BC_STATUS_MESSAGE: '📦 Shipment status update',
     BC_ACCEPT_MESSAGE: '✅ You accepted the shipment',
+    BC_REJECT_MESSAGE: '❌ You rejected the shipment',
     BC_RECAP_MESSAGE: (shipment) => '🆔 Shipment: ' + shipment.shipment + '\n📍 Pickup address: ' + shipment.pickup + '\n📍 Destination address: ' + shipment.delivery + '\n☎️ Phone number: ' + shipment.phone + '\n#️⃣ Number of packages: ' + shipment.quantity + '\n⚖️ Weight: ' + shipment.weight + "\n",
 
 }

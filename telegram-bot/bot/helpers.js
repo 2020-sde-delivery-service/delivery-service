@@ -1,4 +1,5 @@
 const axios = require('axios');
+const statusStrings = require('../constant/statusStrings');
 const headers = {
     "Content-Type": "application/json"
 }
@@ -142,7 +143,8 @@ module.exports = {
 
         let ok = false;
         try {
-            const resp = await axios.post(process.env.SHIPMENT_SERVICE_URL + '/shipment/v1/' + deliveryRequestId + 'shipper');
+            const data = { "statusId": statusStrings.DELIVERY_STATUS_ACCEPTED }
+            const resp = await axios.post(process.env.SHIPMENT_SERVICE_URL + '/shipment/v1/' + deliveryRequestId + '/status', data, headers);
             ok = resp.data.isShipper;
         } catch (err) {
             console.error(err);
@@ -171,5 +173,23 @@ module.exports = {
         }
 
         return id;
+    },
+    setPosition: async (chatId, location) => {
+
+        let data = {
+            "partyId": chatId,
+            "currentLocation": {
+                "point": {
+                    "x": location.longitude,
+                    "y": location.latitude
+                }
+            }
+        }
+
+        try {
+            await axios.post(process.env.LOCATION_SERVICE_URL + '/peoples', data, headers);
+        } catch (err) {
+            console.error(err);
+        }
     },
 }

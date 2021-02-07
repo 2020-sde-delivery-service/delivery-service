@@ -9,10 +9,9 @@ const deliveryConfirmWizard = require('./deliveryConfirmWizard');
 const trip = require('./trip');
 const becomeShipperWizard = require('./becomeShipperWizard');
 const status = require('./status');
-const { checkShipper, acceptShipment } = require('./helpers');
+const { checkShipper, acceptShipment, setPosition } = require('./helpers');
 const strings = require('../constant/strings');
 const helpers = require('./helpers');
-const { ERROR_MESSAGE, NOSHIPPER_MESSAGE } = require('../constant/strings');
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
@@ -37,7 +36,7 @@ bot.start(async (ctx) => {
             .resize()
         );
     } else {
-        return ctx.reply(ERROR_MESSAGE);
+        return ctx.reply(strings.ERROR_MESSAGE);
     }
 });
 
@@ -50,7 +49,7 @@ bot.command('pickup', async (ctx) => {
     if (ok) {
         ctx.scene.enter('pickup-wizard');
     } else {
-        ctx.reply(NOSHIPPER_MESSAGE);
+        ctx.reply(strings.NOSHIPPER_MESSAGE);
     }
 });
 bot.command('deliver', async (ctx) => {
@@ -58,7 +57,7 @@ bot.command('deliver', async (ctx) => {
     if (ok) {
         ctx.scene.enter('delivery-wizard');
     } else {
-        ctx.reply(NOSHIPPER_MESSAGE);
+        ctx.reply(strings.NOSHIPPER_MESSAGE);
     }
 });
 bot.command('trip', async (ctx) => {
@@ -66,7 +65,7 @@ bot.command('trip', async (ctx) => {
     if (ok) {
         trip(ctx);
     } else {
-        ctx.reply(NOSHIPPER_MESSAGE);
+        ctx.reply(strings.NOSHIPPER_MESSAGE);
     }
 });
 bot.command('becomeshipper', (ctx) => ctx.scene.enter('shipper-wizard'));
@@ -79,9 +78,11 @@ bot.hears(/\/acceptDelivery(.+)/, async (ctx) => {
         let ok = await acceptShipment(deliveryId);
         if (ok) {
             ctx.reply(strings.BC_ACCEPT_MESSAGE);
+        } else {
+            ctx.reply(strings.ERROR_MESSAGE);
         }
     } else {
-        ctx.reply(strings.ERROR_MESSAGE);
+        ctx.reply(strings.NOSHIPPER_MESSAGE);
     }
 });
 
@@ -91,19 +92,19 @@ bot.hears(/\/rejectDelivery(.+)/, async (ctx) => {
     if (isShipper) {
         //would be better but should pass through delivery service
         //let ok = await acceptShipment(deliveryId, false);
-        ok = true;
-        if (ok) {
-            ctx.reply(strings.CANCEL_MESSAGE);
-        }
+        ctx.reply(strings.BC_REJECT_MESSAGE);
     } else {
-        ctx.reply(strings.ERROR_MESSAGE);
+        ctx.reply(strings.NOSHIPPER_MESSAGE);
     }
 });
 
 
-bot.on('location', (ctx) => { console.log(ctx.message.location) });
-bot.on('edited_message', (ctx) => { console.log(ctx.editedMessage.location) });
-
+bot.on('location', (ctx) => { setPosition(ctx.chat.id, ctx.message.location) });
+bot.on('edited_message', (ctx) => {
+    if (ctx.editedMessage.location) {
+        setPosition(ctx.chat.id, ctx.editedMessage.location);
+    }
+});
 bot.command('usermode', (ctx) =>
     ctx.reply('User mode set', Markup
         .keyboard(['/newdelivery', '/status'])
