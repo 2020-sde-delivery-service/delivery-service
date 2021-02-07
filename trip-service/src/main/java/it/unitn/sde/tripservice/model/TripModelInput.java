@@ -6,5 +6,5 @@ import lombok.Data;
 
 @Data
 public class TripModelInput {
-    private UUID shipperId;
+    private UUID deliveryRequestId;
 }

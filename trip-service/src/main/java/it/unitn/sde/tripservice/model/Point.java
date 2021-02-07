@@ -15,4 +15,5 @@ public class Point {
     private double lng;
     private Date assignTime;
     private String statusId;
+    private String tripId;
 }
