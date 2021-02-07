@@ -34,13 +34,10 @@ public class Trip {
     @Column(name = "trip_id")
     private UUID tripId;
     private String statusId;
-    @CreatedDate
     private Date createdDate;
-    @CreatedDate
     private Date startDate;
-    @CreatedDate
     private Date endDate;
-    
+    private UUID shipperId;
     @OneToMany(mappedBy = "trip")
     private List<Point> points;
 
@@ -49,6 +46,10 @@ public class Trip {
         if (statusId == null) {
             statusId = StatusEnum.TRIP_CREATED.name();
         }
+        if (createdDate == null)
+            createdDate = new Date();
+        if (startDate == null)
+            startDate = new Date();
     }
 
 }
