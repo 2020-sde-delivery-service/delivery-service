@@ -1,3 +1,4 @@
+/*
 const { Composer, Markup, Scenes, session, Telegraf } = require('telegraf');
 
 const strings = require('../constant/strings');
@@ -88,3 +89,4 @@ deliveryConfirmWizard.enter(async (ctx) => {
 });
 
 module.exports = deliveryConfirmWizard;
+*/

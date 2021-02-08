@@ -82,10 +82,6 @@ module.exports = {
     setShipper: async (req, res) => {
         const id = req.params.id;
 
-        if (!id) {
-            return res.status(400).send();
-        }
-
         let party;
         try {
             // SEARCH USER WITH chatId
@@ -117,10 +113,6 @@ module.exports = {
     checkShipper: async (req, res) => {
         const id = req.params.id;
 
-        if (!id) {
-            return res.status(400).send();
-        }
-
         let party;
         try {
             // SEARCH USER WITH chatId
@@ -142,19 +134,26 @@ module.exports = {
             res.status(500).send({ error });
         }
     },
-    getOne: async (req, res) => {
-        const id = req.params.id;
-
-        if (!id) {
-            return res.status(400).send();
-        }
+    getByUserId: async (req, res) => {
+        const userId = req.params.userId;
 
         try {
             const resp = await axios.get(process.env.DATA_SERVICE_URL + '/parties/search/findByUserId', {
                 params: {
-                    userId: id
+                    userId: userId
                 }
             });
+            res.send(resp.data);
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({ error });
+        }
+    },
+    getOne: async (req, res) => {
+        const id = req.params.id;
+
+        try {
+            const resp = await axios.get(process.env.DATA_SERVICE_URL + '/parties/' + id);
             res.send(resp.data);
         } catch (error) {
             console.log(error);

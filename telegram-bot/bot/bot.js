@@ -4,18 +4,20 @@ const { Composer, Markup, Scenes, session, Telegraf } = require('telegraf');
 dotenv.config();
 
 const deliveryWizard = require('./deliveryWizard');
-const pickupConfirmWizard = require('./pickupConfirmWizard');
-const deliveryConfirmWizard = require('./deliveryConfirmWizard');
+//const pickupConfirmWizard = require('./pickupConfirmWizard');
+//const deliveryConfirmWizard = require('./deliveryConfirmWizard');
 const trip = require('./trip');
 const becomeShipperWizard = require('./becomeShipperWizard');
+const acceptDeliveryWizard = require('./acceptDeliveryWizard');
 const status = require('./status');
+const processWizard = require('./processWizard');
 const { checkShipper, acceptShipment, setPosition } = require('./helpers');
 const strings = require('../constant/strings');
 const helpers = require('./helpers');
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
-const stage = new Scenes.Stage([deliveryWizard, pickupConfirmWizard, deliveryConfirmWizard, becomeShipperWizard]);
+const stage = new Scenes.Stage([deliveryWizard, /*pickupConfirmWizard, deliveryConfirmWizard, */becomeShipperWizard, acceptDeliveryWizard, processWizard]);
 
 bot.use(session());
 bot.use(stage.middleware());
@@ -41,7 +43,7 @@ bot.start(async (ctx) => {
 });
 
 bot.command('help', (ctx) => {
-    return ctx.reply('Commands list: \n/start\n/help\n/newdelivery\n/status\n/pickup\n/deliver\n/trip\n/becomeshipper\n/usermode\n/shippermode')
+    return ctx.reply('Commands list: \n/start\n/help\n/newdelivery\n/status\n/trip\n/becomeshipper\n/usermode\n/shippermode')
 });
 bot.command('newdelivery', (ctx) => { ctx.scene.enter('super-wizard') });
 bot.command('pickup', async (ctx) => {
@@ -71,21 +73,34 @@ bot.command('trip', async (ctx) => {
 bot.command('becomeshipper', (ctx) => ctx.scene.enter('shipper-wizard'));
 bot.command('status', status);
 
+/*
 bot.hears(/\/acceptDelivery(.+)/, async (ctx) => {
-    let deliveryId = ctx.match[1];
+    ctx.session.deliveryId = ctx.match[1];
     let isShipper = await checkShipper(ctx.chat.id);
     if (isShipper) {
-        let ok = await acceptShipment(deliveryId);
-        if (ok) {
-            ctx.reply(strings.BC_ACCEPT_MESSAGE);
-        } else {
-            ctx.reply(strings.ERROR_MESSAGE);
-        }
+        ctx.scene.enter('accept-wizard');
+    } else {
+        ctx.reply(strings.NOSHIPPER_MESSAGE);
+    }
+});
+*/
+bot.action(/acceptDelivery(.+)/, async (ctx) => {
+
+    ctx.session.deliveryId = ctx.match[1];
+    let isShipper = await checkShipper(ctx.chat.id);
+    if (isShipper) {
+        ctx.scene.enter('accept-wizard');
     } else {
         ctx.reply(strings.NOSHIPPER_MESSAGE);
     }
 });
 
+bot.action(/rejectDelivery(.+)/, async (ctx) => {
+    await ctx.editMessageText(ctx.update.callback_query.message.text);
+    ctx.reply(strings.CANCEL_MESSAGE);
+});
+
+/*
 bot.hears(/\/rejectDelivery(.+)/, async (ctx) => {
     let deliveryId = ctx.match[1];
     let isShipper = await checkShipper(ctx.chat.id);
@@ -93,6 +108,17 @@ bot.hears(/\/rejectDelivery(.+)/, async (ctx) => {
         //would be better but should pass through delivery service
         //let ok = await acceptShipment(deliveryId, false);
         ctx.reply(strings.BC_REJECT_MESSAGE);
+    } else {
+        ctx.reply(strings.NOSHIPPER_MESSAGE);
+    }
+});
+*/
+
+bot.hears(/\/process(.+)/, async (ctx) => {
+    ctx.session.pointId = ctx.match[1].replace(/_/g, '-');
+    let isShipper = await checkShipper(ctx.chat.id);
+    if (isShipper) {
+        ctx.scene.enter('process-wizard');
     } else {
         ctx.reply(strings.NOSHIPPER_MESSAGE);
     }
@@ -114,7 +140,7 @@ bot.command('usermode', (ctx) =>
 
 bot.command('shippermode', (ctx) =>
     ctx.reply('Shipper mode set', Markup
-        .keyboard(['/trip', '/pickup', '/deliver'])
+        .keyboard(['/trip'])
         .resize()
     )
 )

@@ -7,5 +7,5 @@ import org.springframework.data.repository.CrudRepository;
 import it.unitn.sde.entity.Trip;
 
 public interface TripRepo extends CrudRepository<Trip, UUID> {
-
+    Trip findByShipperIdAndStatusId (UUID shipperId, String statusId);
 }

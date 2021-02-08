@@ -56,7 +56,7 @@ module.exports = {
         console.log(deliveryRequestId + "-" + shipperId);
 
         if (!shipperId) {
-            res.status(400).send();
+            return res.status(400).send()
         }
 
         try {
@@ -84,7 +84,7 @@ module.exports = {
         const statusId = req.body.statusId;
 
         if (!statusId) {
-            res.status(400).send();
+            return res.status(400).send()
         }
 
         //check correct status
@@ -130,6 +130,23 @@ module.exports = {
     },
     getShipmentsOfUser: async (req, res) => {
 
+        const userId = req.params.userId;
+
+        try {
+            const resp = await axios.get(process.env.DATA_SERVICE_URL + DELIVERY_REQUEST_API + '/search/findByCustomerId', {
+                params: {
+                    customerId: userId
+                }
+            });
+
+            let data = resp.data._embedded.deliveryRequest;
+
+            console.log(data);
+            res.send(data);
+        } catch (err) {
+            console.error(err);
+            res.status(500).send()
+        }
         /*
 
         const shipperId = req.params.shipperId;

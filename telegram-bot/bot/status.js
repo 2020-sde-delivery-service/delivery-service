@@ -3,9 +3,9 @@ const strings = require('../constant/strings');
 const getShipmentsStatus = require('./helpers').getShipmentsStatus;
 
 const status = async (ctx) => {
-    let trip = await getShipmentsStatus();
+    let status = await getShipmentsStatus(ctx.chat.id);
     let message = strings.S_SHIPMENT_MESSAGE + "\n\n";
-    trip.forEach(e => {
+    status.forEach(e => {
         message += strings.S_RECAP_MESSAGE(e) + "\n\n";
     });
 

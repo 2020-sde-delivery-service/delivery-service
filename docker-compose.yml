@@ -86,7 +86,9 @@ services:
       GOOGLEMAP_SERVICE_URL: "http://google-maps-adapter:8080"
       SHIPPER_ASSIGNMENT_SERVICE_URL: "http://shipper-assignment-service:8080"
       TRIP_SERVICE_URL: "http://trip-service:8080"
+      TELEGRAM_BOT_URL: "http://telegram-bot:8060"
       MAXIMUM_WAIT_TIME: 50000
+      REJECT_WAIT_TIME: 60000
 
   telegram-bot:
     build:
@@ -99,6 +101,8 @@ services:
       GOOGLEMAP_SERVICE_URL: "http://google-maps-adapter:8080"
       DELIVERY_SERVICE_URL: "http://delivery-service:8080"
       LOCATION_SERVICE_URL: "http://location-service:8080"
+      STATUS_SERVICE_URL: "http://status-service:8050"
+
   status-service:
     build:
       context: ./status-service
@@ -107,6 +111,7 @@ services:
     environment:
       SHIPMENT_SERVICE_URL: "http://shipment-service:8090"
       TRIP_SERVICE_URL: "http://trip-service:8080"
+      TELEGRAM_BOT_URL: "http://telegram-bot:8060"
 
 volumes:
   postgres_data:

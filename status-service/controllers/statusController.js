@@ -1,6 +1,7 @@
 const axios = require('axios');
 let dotenv = require('dotenv');
 const statusStrings = require('../constants/statusStrings');
+const requestTypes = require('../constants/requestTypes');
 const headers = {
     "Content-Type": "application/json"
 };
@@ -8,48 +9,69 @@ const headers = {
 dotenv.config();
 
 module.exports = {
-    setPickupStatus: async (req, res) => {
-        const deliveryRequestId = req.params.deliveryRequestId;
-
-        const data = { "statusId": statusStrings.DELIVERY_STATUS_PROCESSING }
-
-
-        //***REQUEST ACCEPTED
-        // SET STATUS IN DELIVERY REQUEST (DELIVERYREQUESTID, PICKUP) - SHIPMENT-SERVICE
-        //CREATE TRIP (SHIPPERID) OR (USE) PRESENT FOR ONLINE UPDATE) - TRIP-SERVICE
-        //CREATE RELATION SHIPPER TRIP OR (USE PRESENT FOR ONLINE UPDATE) - TRIP-SERVICE
-        //CREATE POINTS (DELIVERYREQUESTID, PICKUP, TRIPID, TRIPSEQUENCE + 1) - TRIP-SERVICE
-        //CREATE POINTS (DELIVERYREQUESTID, DELIVER, TRIPID, TRIPSEQUENCE + 2) - TRIP-SERVICE
-
-        //***PICKUP
-        // SET STATUS IN DELIVERY REQUEST (DELIVERYREQUESTID, PICKUP) - SHIPMENT-SERVICE
-        // SET STATUS IN POINT (DELIVERYREQUESTID, PICKUP, DONE) - TRIP-SERVICE
-        // SET STATUS IN TRIP (TRIPSEQUENCE++) - TRIP-SERVICE
-
-        //***DELIVERY
-        // SET STATUS IN DELIVERY REQUEST (DELIVERYREQUESTID, DELIVER) - SHIPMENT-SERVICE
-        // SET STATUS IN POINT (DELIVERYREQUESTID, DELIVER, DONE) - TRIP-SERVICE
-        // SET STATUS IN TRIP (TRIPSEQUENCE++, IF(NO_OTHER_POINTS_IN_TRIP): TRIP_DONE) - TRIP-SERVICE
-
+    setStatus: async (req, res) => {
+        const pointId = req.params.pointId;
 
         try {
-            const resp = await axios.patch(process.env.SHIPMENT_SERVICE_URL + "/deliveryRequest/" + deliveryRequestId + "/status", data, headers);
-            console.log(resp.data);
+            const tripResp = await axios.post(process.env.TRIP_SERVICE_URL + "/complete-point/" + pointId);
+            const point = tripResp.data;
+
+            let status;
+
+            if (point.requestType == requestTypes.PICKUP_REQUEST) {
+                status = statusStrings.DELIVERY_STATUS_PROCESSING
+            } else if (point.requestType == requestTypes.DELIVERY_REQUEST) {
+                status = statusStrings.DELIVERY_STATUS_DELIVERED
+            }
+
+            const data = { "statusId": status };
+
+            const resp = await axios.post(process.env.SHIPMENT_SERVICE_URL + "/shipment/v1/deliveryRequest/" + point.deliveryRequestId + "/status", data, headers);
+
+            await axios.post(process.env.TELEGRAM_BOT_URL + "/bot/v1/status", resp.data, headers);
+
             res.send(resp.data);
         } catch (err) {
             console.error(err);
             res.status(500).send()
         }
     },
-    setDeliverStatus: async (req, res) => {
-        const deliveryRequestId = req.params.deliveryRequestId;
-
-        const data = { "statusId": statusStrings.DELIVERY_STATUS_DELIVERED }
+    getTripInfo: async (req, res) => {
+        const shipperId = req.params.shipperId;
 
         try {
-            const resp = await axios.post(process.env.SHIPMENT_SERVICE_URL + "/deliveryRequest/" + deliveryRequestId + "/status", data, headers);
-            console.log(resp.data);
-            res.send(resp.data);
+            const resp = await axios.get(process.env.TRIP_SERVICE_URL + "/get-current-trip-by-shipper/" + shipperId);
+
+            const points = resp.data.points;
+            let deliveries = {};
+            let promises = [];
+
+            points.forEach((point) => {
+                deliveries[point.deliveryRequestId] = {};
+            });
+
+            for (let key in deliveries) {
+                promises.push(new Promise(async (resolve, reject) => {
+                    let res = await axios.get(process.env.SHIPMENT_SERVICE_URL + "/shipment/v1/deliveryRequest/" + key);
+                    deliveries[key][requestTypes.PICKUP_REQUEST] = res.data.pickupAddress;
+                    deliveries[key][requestTypes.DELIVERY_REQUEST] = res.data.deliveryAddress;
+                    resolve();
+                }));
+            }
+
+            await Promise.all(promises);
+
+            points.forEach((point) => {
+                point.address = deliveries[point.deliveryRequestId][point.requestType];
+            });
+
+            data = {
+                trip: resp.data.trip,
+                points: points
+            };
+
+
+            res.send(data);
         } catch (err) {
             console.error(err);
             res.status(500).send()

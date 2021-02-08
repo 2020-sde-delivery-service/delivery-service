@@ -20,88 +20,38 @@ module.exports = {
 
         return address;
     },
-    getShipments: async (shipperId) => {
-        /*
-        get shipments of the shipper
-        try {
-            const resp = await axios.get('http://google-maps-adapter:8080/maps/v1/geocode', {
-                params: {
-                    address: address
-                }
-            });
-    
-            address = resp.data.address;
-        } catch (err) {
-            console.error(err);
-        }
-    */
-
-
-
-        let shipping = [
-            { shipment: "id_54735", pickup: "Trento, via Brennero 10", delivery: "Trento, via Brennero 70", phone: "1551651189" },
-            { shipment: "id_58558", pickup: "New York", delivery: "Chicago", phone: "6515515189556" },
-            { shipment: "id_22255", pickup: "Los Angeles", delivery: "Mexico City", phone: "756961166516" },
-            { shipment: "id_22125", pickup: "Los Angeles", delivery: "Nanno", phone: "2827827278028" },
-            { shipment: "id_11505", pickup: "Trento", delivery: "Mexico City", phone: "693652536026" },
-            { shipment: "id_54935", pickup: "Los Angeles", delivery: "Los Angeles", phone: "25727052757527" },
-            { shipment: "id_54784", pickup: "Trento, via Brennero 40", delivery: "Trento, via Brennero 100", phone: "525260227227" }
-        ];
-
-        return shipping;
-    },
     getTrip: async (shipperId) => {
-        /*
-        get trip of the shipper
+
+        let id;
         try {
-            const resp = await axios.get('http://google-maps-adapter:8080/maps/v1/geocode', {
-                params: {
-                    address: address
-                }
-            });
-    
-            address = resp.data.address;
+            const idResp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/byUserId/' + shipperId);
+            id = idResp.data.partyId;
+
+            const tripResp = await axios.get(process.env.STATUS_SERVICE_URL + '/status/v1/trip/' + id);
+
+            return tripResp.data.points.filter(p => p.statusId == statusStrings.POINT_ASSIGNED);
+
         } catch (err) {
             console.error(err);
+            return [];
         }
-    */
-
-        let trip = [
-            { address: "Trento, via Brennero 10", action: "Pickup", shipment: "id_54735" },
-            { address: "Trento, via Brennero 40", action: "Pickup", shipment: "id_54784" },
-            { address: "Trento, via Brennero 70", action: "Delivery", shipment: "id_54735" },
-            { address: "Trento, via Brennero 100", action: "Delivery", shipment: "id_54784" },
-        ];
-
-        return trip;
     },
     getShipmentsStatus: async (userId) => {
-        /*
-        get trip of the shipper
+
+        let id;
         try {
-            const resp = await axios.get('http://google-maps-adapter:8080/maps/v1/geocode', {
-                params: {
-                    address: address
-                }
-            });
-    
-            address = resp.data.address;
+            const idResp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/byUserId/' + userId);
+            id = idResp.data.partyId;
+
+            const resp = await axios.get(process.env.SHIPMENT_SERVICE_URL + '/shipment/v1/deliveryRequest/ofuser/' + id);
+
+            return resp.data;
+
         } catch (err) {
             console.error(err);
+            return [];
         }
-    */
 
-        let shipments = [
-            { shipment: "id_54735", pickup: "Trento, via Brennero 10", delivery: "Trento, via Brennero 70", phone: "1551651189", status: "delivered" },
-            { shipment: "id_58558", pickup: "New York", delivery: "Chicago", phone: "6515515189556", status: "delivered" },
-            { shipment: "id_22255", pickup: "Los Angeles", delivery: "Mexico City", phone: "756961166516", status: "delivered" },
-            { shipment: "id_22125", pickup: "Los Angeles", delivery: "Nanno", phone: "2827827278028", status: "delivered" },
-            { shipment: "id_11505", pickup: "Trento", delivery: "Mexico City", phone: "693652536026", status: "delivering" },
-            { shipment: "id_54935", pickup: "Los Angeles", delivery: "Los Angeles", phone: "25727052757527", status: "delivering" },
-            { shipment: "id_54784", pickup: "Trento, via Brennero 40", delivery: "Trento, via Brennero 100", phone: "525260227227", status: "working" }
-        ];
-
-        return shipments;
     },
     createDeliveryRequest: async (delivery) => {
         let ok = false;
@@ -144,8 +94,20 @@ module.exports = {
         let ok = false;
         try {
             const data = { "statusId": statusStrings.DELIVERY_STATUS_ACCEPTED }
-            const resp = await axios.post(process.env.SHIPMENT_SERVICE_URL + '/shipment/v1/' + deliveryRequestId + '/status', data, headers);
-            ok = resp.data.isShipper;
+            const resp = await axios.post(process.env.SHIPMENT_SERVICE_URL + '/shipment/v1/deliveryRequest/' + deliveryRequestId + '/status', data, headers);
+            ok = resp.data.deliveryRequestId;
+        } catch (err) {
+            console.error(err);
+        }
+
+        return ok;
+    },
+    processPoint: async (pointId) => {
+
+        let ok = false;
+        try {
+            await axios.post(process.env.STATUS_SERVICE_URL + '/status/v1/point/' + pointId, headers);
+            ok = true;
         } catch (err) {
             console.error(err);
         }
@@ -166,7 +128,7 @@ module.exports = {
     getCustomerId: async (chatId) => {
         let id;
         try {
-            const resp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/' + chatId);
+            const resp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/byUserId/' + chatId);
             id = resp.data.partyId;
         } catch (err) {
             console.error(err);
@@ -176,8 +138,17 @@ module.exports = {
     },
     setPosition: async (chatId, location) => {
 
+        let id;
+        try {
+            const resp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/byUserId/' + chatId);
+            id = resp.data.partyId;
+        } catch (err) {
+            console.error(err);
+            return;
+        }
+
         let data = {
-            "partyId": chatId,
+            "partyId": id,
             "currentLocation": {
                 "point": {
                     "x": location.longitude,
@@ -192,4 +163,5 @@ module.exports = {
             console.error(err);
         }
     },
+
 }

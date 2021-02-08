@@ -40,6 +40,11 @@ public class DeliveryServiceImpl implements DeliveryService {
         @Value("${maximumwaittime}")
         private long maximumWaitTime;
 
+        @Value("${rejectwaittime}")
+        private long rejectWaitTime;
+        @Value("${telegrambot.url}")
+        private String telegramBotUrl;
+
         @Override
         public DeliveryRequestModel createDeliveryRequest(DeliveryRequestInputModel deliveryModel) {
                 GeoCodeModel geoCodePickup = restTemplate.getForObject(googlemapservice + ApiConstant.GEOCODE_API
@@ -71,6 +76,7 @@ public class DeliveryServiceImpl implements DeliveryService {
                 ListCandidateModel candidates = restTemplate.postForObject(
                                 shipperAssignmentService + ApiConstant.GET_CANDIDATE, requestModel,
                                 ListCandidateModel.class);
+                String status = StatusEnum.DELIVERY_REQUEST_CREATED.name();
                 for (int i = 0; i < candidates.getData().size(); i++) {
                         log.info("start " + i);
                         Map<String, String> body = new HashMap<>();
@@ -80,6 +86,7 @@ public class DeliveryServiceImpl implements DeliveryService {
                                                         + deliveryModel.getDeliveryRequestId().toString()
                                                         + ApiConstant.ASSIGN_SHIPPER_API_1,
                                         body, DeliveryRequestModel.class);
+                        restTemplate.postForObject(telegramBotUrl + ApiConstant.SEND_REQUEST, re, Object.class);
                         try {
                                 Thread.sleep(maximumWaitTime);
                         } catch (InterruptedException e) {
@@ -92,12 +99,28 @@ public class DeliveryServiceImpl implements DeliveryService {
                                         DeliveryRequestModel.class);
                         if (StatusEnum.DELIVERY_REQUEST_ACCEPTED.name().equals(re.getStatusId())) {
                                 log.info("assignment process completed");
+                                restTemplate.postForObject(telegramBotUrl + ApiConstant.SEND_STATUS, re, Object.class);
                                 Map<String, String> tripInput = new HashMap<>();
                                 tripInput.put("deliveryRequestId", re.getDeliveryRequestId().toString());
                                 Trip trip = restTemplate.postForObject(tripServiceUrl + ApiConstant.CREATE_TRIP,
                                                 tripInput, Trip.class);
                                 break;
                         }
+                }
+                //thread seems to be waiting for all requests
+                //maybe wait 5 minutes and check again
+                try {
+                        Thread.sleep(rejectWaitTime);
+                } catch (InterruptedException e) {
+                        e.printStackTrace();
+                }
+
+                DeliveryRequestModel re = restTemplate.getForObject(
+                        shimentServiceUrl + ApiConstant.GET_DELIVERY_REQUEST_API + "/"
+                                + deliveryModel.getDeliveryRequestId().toString(),
+                        DeliveryRequestModel.class);
+                if (StatusEnum.DELIVERY_REQUEST_CREATED.name().equals(re.getStatusId())) {
+                        restTemplate.postForObject(telegramBotUrl + ApiConstant.SEND_NODELIVERY, deliveryModel, Object.class);
                 }
         }
 }

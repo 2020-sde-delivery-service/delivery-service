@@ -2,11 +2,13 @@ package it.unitn.sde.tripservice.controller;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -40,6 +42,12 @@ public class ApiController {
     public ResponseEntity<?> addPoints(@PathVariable String pointId) {
         Point point = tripService.completePoint(pointId);
         return ResponseEntity.ok().body(point);
+    }
+
+    @GetMapping("/get-current-trip-by-shipper/{shipperId}")
+    public ResponseEntity<?> getTrip(@PathVariable String shipperId) {
+        Map<String, Object> resp = tripService.getTrip(shipperId);
+        return ResponseEntity.ok().body(resp);
     }
 
 }
