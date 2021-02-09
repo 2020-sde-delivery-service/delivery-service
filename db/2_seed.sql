@@ -20,10 +20,9 @@ INSERT INTO status (status_id, status_type_id, status_code, sequence_id, descrip
 INSERT INTO status (status_id, status_type_id, status_code, sequence_id, description, last_updated_stamp, created_stamp) VALUES ('DELIVERY_REQUEST_PROCESSING', 'DELIVERY_REQUEST_STATUS', 'PROCESSING', 2, 'Delivery request processing', NOW(), NOW());
 INSERT INTO status (status_id, status_type_id, status_code, sequence_id, description, last_updated_stamp, created_stamp) VALUES ('DELIVERY_REQUEST_DELIVERIED', 'DELIVERY_REQUEST_STATUS', 'DELIVERIED', 3, 'Delivery request deliveried', NOW(), NOW());
 
-INSERT INTO status (status_id, status_type_id, status_code, sequence_id, description, last_updated_stamp, created_stamp) VALUES ('TRIP_CREATED', 'TRIP_STATUS', 'CREATED', 0, 'Trip request created', NOW(), NOW());
-INSERT INTO status (status_id, status_type_id, status_code, sequence_id, description, last_updated_stamp, created_stamp) VALUES ('TRIP_ACCEPTED', 'TRIP_STATUS', 'ACCEPTED', 1, 'Trip request accepted', NOW(), NOW());
-INSERT INTO status (status_id, status_type_id, status_code, sequence_id, description, last_updated_stamp, created_stamp) VALUES ('TRIP_PROCESSING', 'TRIP_STATUS', 'PROCESSING', 2, 'Trip request processing', NOW(), NOW());
-INSERT INTO status (status_id, status_type_id, status_code, sequence_id, description, last_updated_stamp, created_stamp) VALUES ('TRIP_FINISHED', 'TRIP_STATUS', 'DELIVERIED', 3, 'Trip request deliveried', NOW(), NOW());
+
+INSERT INTO status (status_id, status_type_id, status_code, sequence_id, description, last_updated_stamp, created_stamp) VALUES ('TRIP_STARTED', 'TRIP_STATUS', 'STARTED', 2, 'Trip processing', NOW(), NOW());
+INSERT INTO status (status_id, status_type_id, status_code, sequence_id, description, last_updated_stamp, created_stamp) VALUES ('TRIP_FINISHED', 'TRIP_STATUS', 'FINISHED', 3, 'Trip finished', NOW(), NOW());
 
 INSERT INTO status (status_id, status_type_id, status_code, sequence_id, description, last_updated_stamp, created_stamp) VALUES ('POINT_ASSIGNED', 'POINT_STATUS', 'ASSIGNED', 0, 'Assigned point', NOW(), NOW());
 INSERT INTO status (status_id, status_type_id, status_code, sequence_id, description, last_updated_stamp, created_stamp) VALUES ('POINT_PROCESSED', 'POINT_STATUS', 'PROCESSED', 1, 'Point processed', NOW(), NOW());
