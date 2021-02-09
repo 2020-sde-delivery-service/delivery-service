@@ -9,6 +9,9 @@ dotenv.config();
 
 module.exports = {
     sendShippingRequest: async (req, res) => {
+
+        console.log("send-shipping-request -start");
+
         const deliveryRequest = req.body;
 
         if (!deliveryRequest.deliveryRequestId) {
@@ -20,7 +23,7 @@ module.exports = {
             const resp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/' + deliveryRequest.customerId);
             userId = resp.data.userId;
         } catch (err) {
-            console.error(err);
+            //console.error(err);
         }
 
         const text = strings.BC_ASK_MESSAGE + '\n\n' + strings.BC_RECAP_MESSAGE(deliveryRequest) /*+
@@ -46,6 +49,9 @@ module.exports = {
 
     },
     sendNoDelivery: async (req, res) => {
+
+        console.log("send-no-delivery -start");
+
         const deliveryRequest = req.body;
 
         if (!deliveryRequest.deliveryRequestId) {
@@ -57,7 +63,7 @@ module.exports = {
             const resp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/' + deliveryRequest.customerId);
             userId = resp.data.userId;
         } catch (err) {
-            console.error(err);
+            //console.error(err);
         }
 
         const text = strings.BC_STATUS_MESSAGE + '\n\n' + strings.S_RECAP_MESSAGE(deliveryRequest) + '\n\n' + strings.REJECTED_MESSAGE;
@@ -75,6 +81,9 @@ module.exports = {
         }
     },
     sendStatus: async (req, res) => {
+
+        console.log("send-status -start");
+
         const deliveryRequest = req.body;
 
         if (!deliveryRequest.deliveryRequestId) {
@@ -86,7 +95,7 @@ module.exports = {
             const resp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/' + deliveryRequest.customerId);
             userId = resp.data.userId;
         } catch (err) {
-            console.error(err);
+            //console.error(err);
         }
 
         let status;

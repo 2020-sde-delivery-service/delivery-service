@@ -9,10 +9,12 @@ const headers = {
 
 module.exports = {
     create: async (req, res) => {
-        console.log(req.body);
+
+        console.log("create -start");
+
         try {
             const resp = await axios.post(process.env.DATA_SERVICE_URL + DELIVERY_REQUEST_API, req.body, headers);
-            console.log(resp.data);
+            //console.log(resp.data);
             res.send(resp.data);
         } catch (error) {
             if (error.response) {
@@ -43,6 +45,9 @@ module.exports = {
     },
     */
     getOne: async (req, res) => {
+
+        console.log("get-one -start");
+
         const deliveryRequestId = req.params.deliveryRequestId;
 
         try {
@@ -59,9 +64,12 @@ module.exports = {
         }
     },
     setShipper: async (req, res) => {
+
+        console.log("set-shipper -start");
+
         const deliveryRequestId = req.params.deliveryRequestId;
         const shipperId = req.body.shipperId;
-        console.log(deliveryRequestId + "-" + shipperId);
+        //console.log(deliveryRequestId + "-" + shipperId);
 
         if (!shipperId) {
             return res.status(400).send()
@@ -80,7 +88,7 @@ module.exports = {
             }
 
             const resp = await axios.patch(process.env.DATA_SERVICE_URL + DELIVERY_REQUEST_API + "/" + deliveryRequestId, data, headers);
-            console.log(resp.data);
+            //console.log(resp.data);
             res.send(resp.data);
         } catch (error) {
             if (error.response) {
@@ -92,6 +100,9 @@ module.exports = {
         }
     },
     setStatus: async (req, res) => {
+
+        console.log("get-status -start");
+
         const deliveryRequestId = req.params.deliveryRequestId;
         const statusId = req.body.statusId;
 
@@ -104,7 +115,7 @@ module.exports = {
 
         try {
             const resp = await axios.patch(process.env.DATA_SERVICE_URL + DELIVERY_REQUEST_API + "/" + deliveryRequestId, data, headers);
-            console.log(resp.data);
+            //console.log(resp.data);
             res.send(resp.data);
         } catch (error) {
             if (error.response) {
@@ -146,6 +157,8 @@ module.exports = {
     },
     getShipmentsOfUser: async (req, res) => {
 
+        console.log("get-shipments-of-user -start");
+
         const userId = req.params.userId;
 
         try {
@@ -157,7 +170,7 @@ module.exports = {
 
             let data = resp.data._embedded.deliveryRequest;
 
-            console.log(data);
+            //console.log(data);
             res.send(data);
         } catch (error) {
             if (error.response) {

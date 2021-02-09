@@ -31,6 +31,9 @@ module.exports = {
     },
     */
     getSingularDistance: async (req, res) => {
+
+        console.log("get-singular-distance -start");
+
         const origin = req.query.origin;
         const destination = req.query.destination;
 
@@ -63,6 +66,9 @@ module.exports = {
         }
     },
     getMatrix: async (req, res) => {
+
+        console.log("get-matrix -start");
+
         const origins = req.query.origins;
         const destinations = req.query.destinations;
 
@@ -94,6 +100,9 @@ module.exports = {
         }
     },
     getCoordinates: async (req, res) => {
+
+        console.log("get-coordinates -start");
+
         const address = req.query.address;
 
         if (!address) {

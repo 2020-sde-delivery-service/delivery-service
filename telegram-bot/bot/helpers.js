@@ -15,7 +15,7 @@ module.exports = {
 
             address = resp.data.address;
         } catch (err) {
-            console.error(err);
+            //console.error(err);
         }
 
         return address;
@@ -32,7 +32,7 @@ module.exports = {
             return tripResp.data.points.filter(p => p.statusId == statusStrings.POINT_ASSIGNED);
 
         } catch (err) {
-            console.error(err);
+            //console.error(err);
             return [];
         }
     },
@@ -48,7 +48,7 @@ module.exports = {
             return resp.data;
 
         } catch (err) {
-            console.error(err);
+            //console.error(err);
             return [];
         }
 
@@ -59,7 +59,7 @@ module.exports = {
             const resp = await axios.post(process.env.DELIVERY_SERVICE_URL + '/create-delivery-request', delivery, headers);
             ok = resp.data.deliveryRequestId ? true : false;
         } catch (err) {
-            console.error(err);
+            //console.error(err);
         }
 
 
@@ -71,7 +71,7 @@ module.exports = {
             const resp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/' + chatId + '/shipper');
             ok = resp.data.isShipper;
         } catch (err) {
-            console.error(err);
+            //console.error(err);
         }
 
         return ok;
@@ -82,7 +82,7 @@ module.exports = {
             const resp = await axios.post(process.env.USER_SERVICE_URL + '/users/v1/' + chatId + '/shipper');
             ok = resp.data.isShipper;
         } catch (err) {
-            console.error(err);
+            //console.error(err);
         }
 
         return ok;
@@ -97,7 +97,7 @@ module.exports = {
             const resp = await axios.post(process.env.SHIPMENT_SERVICE_URL + '/shipment/v1/deliveryRequest/' + deliveryRequestId + '/status', data, headers);
             ok = resp.data.deliveryRequestId;
         } catch (err) {
-            console.error(err);
+            //console.error(err);
         }
 
         return ok;
@@ -109,7 +109,7 @@ module.exports = {
             await axios.post(process.env.STATUS_SERVICE_URL + '/status/v1/point/' + pointId, headers);
             ok = true;
         } catch (err) {
-            console.error(err);
+            //console.error(err);
         }
 
         return ok;
@@ -120,7 +120,7 @@ module.exports = {
             const resp = await axios.post(process.env.USER_SERVICE_URL + '/users/v1/login', loginData);
             ok = resp.data.userId ? true : false;
         } catch (err) {
-            console.error(err);
+            //console.error(err);
         }
 
         return ok;
@@ -131,7 +131,7 @@ module.exports = {
             const resp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/byUserId/' + chatId);
             id = resp.data.partyId;
         } catch (err) {
-            console.error(err);
+            //console.error(err);
         }
 
         return id;
@@ -143,7 +143,7 @@ module.exports = {
             const resp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/byUserId/' + chatId);
             id = resp.data.partyId;
         } catch (err) {
-            console.error(err);
+            //console.error(err);
             return;
         }
 
@@ -160,7 +160,7 @@ module.exports = {
         try {
             await axios.post(process.env.LOCATION_SERVICE_URL + '/peoples', data, headers);
         } catch (err) {
-            console.error(err);
+            //console.error(err);
         }
     },
 

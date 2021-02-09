@@ -32,6 +32,9 @@ module.exports = {
     },
     */
     login: async (req, res) => {
+
+        console.log("login -start");
+
         const id = req.body.id;
         const firstName = req.body.firstName;
         const lastName = req.body.lastName;
@@ -85,6 +88,9 @@ module.exports = {
         res.send(party);
     },
     setShipper: async (req, res) => {
+
+        console.log("set-shipper -start");
+
         const id = req.params.id;
 
         let party;
@@ -120,6 +126,9 @@ module.exports = {
         }
     },
     checkShipper: async (req, res) => {
+
+        console.log("check-shipper -start");
+
         const id = req.params.id;
 
         let party;
@@ -148,6 +157,9 @@ module.exports = {
         }
     },
     getByUserId: async (req, res) => {
+
+        console.log("get-user-by-id -start");
+
         const userId = req.params.userId;
 
         try {
@@ -167,6 +179,9 @@ module.exports = {
         }
     },
     getOne: async (req, res) => {
+
+        console.log("get-one -start");
+
         const id = req.params.id;
 
         try {

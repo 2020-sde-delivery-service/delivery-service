@@ -10,6 +10,9 @@ dotenv.config();
 
 module.exports = {
     setStatus: async (req, res) => {
+
+        console.log("set-status -start");
+
         const pointId = req.params.pointId;
 
         try {
@@ -41,6 +44,9 @@ module.exports = {
         }
     },
     getTripInfo: async (req, res) => {
+
+        console.log("get-trip-info -start");
+
         const shipperId = req.params.shipperId;
 
         try {
