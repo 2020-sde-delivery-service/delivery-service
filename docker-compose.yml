@@ -22,7 +22,7 @@ services:
     build:
       context: ./auth-service
     ports:
-      - 8070:8070
+      - 8070:8080
     environment:
       DATA_SERVICE_URL: "http://data-service:8080"
 
@@ -36,9 +36,10 @@ services:
     build:
       context: ./shipment-service
     ports:
-      - 8090:8090
+      - 8090:8080
     environment:
       DATA_SERVICE_URL: "http://data-service:8080"
+
   data-service:
     build:
       context: ./data-service
@@ -69,6 +70,7 @@ services:
       DATA_SERVICE_URL: "http://data-service:8080"
       LOCATION_SERVICE_URL: "http://location-service:8080"
       RADIUS_LIMIT: "200km"
+
   trip-service:
     build:
       context: ./trip-service
@@ -76,17 +78,18 @@ services:
       - 8085:8080
     environment:
       DATA_SERVICE_URL: "http://data-service:8080"
+
   delivery-service:
     build:
       context: ./delivery-service
     ports:
       - 8084:8080
     environment:
-      SHIPMENT_SERVICE_URL: "http://shipment-service:8090"
+      SHIPMENT_SERVICE_URL: "http://shipment-service:8080"
       GOOGLEMAP_SERVICE_URL: "http://google-maps-adapter:8080"
       SHIPPER_ASSIGNMENT_SERVICE_URL: "http://shipper-assignment-service:8080"
       TRIP_SERVICE_URL: "http://trip-service:8080"
-      TELEGRAM_BOT_URL: "http://telegram-bot:8060"
+      TELEGRAM_BOT_URL: "http://telegram-bot:8080"
       MAXIMUM_WAIT_TIME: 50000
       REJECT_WAIT_TIME: 60000
 
@@ -94,24 +97,24 @@ services:
     build:
       context: ./telegram-bot
     ports:
-      - 8060:8060
+      - 8060:8080
     environment:
-      USER_SERVICE_URL: "http://auth-service:8070"
-      SHIPMENT_SERVICE_URL: "http://shipment-service:8090"
+      USER_SERVICE_URL: "http://auth-service:8080"
+      SHIPMENT_SERVICE_URL: "http://shipment-service:8080"
       GOOGLEMAP_SERVICE_URL: "http://google-maps-adapter:8080"
       DELIVERY_SERVICE_URL: "http://delivery-service:8080"
       LOCATION_SERVICE_URL: "http://location-service:8080"
-      STATUS_SERVICE_URL: "http://status-service:8050"
+      STATUS_SERVICE_URL: "http://status-service:8080"
 
   status-service:
     build:
       context: ./status-service
     ports:
-      - 8050:8050
+      - 8050:8080
     environment:
-      SHIPMENT_SERVICE_URL: "http://shipment-service:8090"
+      SHIPMENT_SERVICE_URL: "http://shipment-service:8080"
       TRIP_SERVICE_URL: "http://trip-service:8080"
-      TELEGRAM_BOT_URL: "http://telegram-bot:8060"
+      TELEGRAM_BOT_URL: "http://telegram-bot:8080"
 
 volumes:
   postgres_data:
