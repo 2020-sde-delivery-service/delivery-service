@@ -20,7 +20,7 @@ module.exports = {
 
         let userId;
         try {
-            const resp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/' + deliveryRequest.customerId);
+            const resp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/' + deliveryRequest.assignedShipperId);
             userId = resp.data.userId;
         } catch (err) {
             //console.error(err);
