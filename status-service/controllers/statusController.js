@@ -31,9 +31,13 @@ module.exports = {
             await axios.post(process.env.TELEGRAM_BOT_URL + "/bot/v1/status", resp.data, headers);
 
             res.send(resp.data);
-        } catch (err) {
-            console.error(err);
-            res.status(500).send()
+        } catch (error) {
+            if (error.response) {
+                res.status(error.response.status).send({ error });
+            } else {
+                res.status(500).send({ error });
+            }
+            //console.error(error);
         }
     },
     getTripInfo: async (req, res) => {
@@ -43,6 +47,7 @@ module.exports = {
             const resp = await axios.get(process.env.TRIP_SERVICE_URL + "/get-current-trip-by-shipper/" + shipperId);
 
             const points = resp.data.points;
+
             let deliveries = {};
             let promises = [];
 
@@ -72,9 +77,13 @@ module.exports = {
 
 
             res.send(data);
-        } catch (err) {
-            console.error(err);
-            res.status(500).send()
+        } catch (error) {
+            if (error.response) {
+                res.status(error.response.status).send({ error });
+            } else {
+                res.status(500).send({ error });
+            }
+            //console.error(error);
         }
     },
 }

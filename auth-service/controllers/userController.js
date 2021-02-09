@@ -5,6 +5,7 @@ const headers = {
     "Content-Type": "application/json"
 }
 
+/*
 const newAuthToken = async function (user) {
     let signOptions = {
         expiresIn: "30d",
@@ -15,7 +16,7 @@ const newAuthToken = async function (user) {
     await user.save();
     return token;
 }
-
+*/
 module.exports = {
     /*
     create: async (req, res) => {
@@ -49,7 +50,7 @@ module.exports = {
             });
             party = resp.data;
         } catch (error) {
-            //console.log(error);
+            //console.error(error);
         }
 
         if (!party) {
@@ -73,8 +74,12 @@ module.exports = {
                     currentLocation: "null"
                 }, headers);
             } catch (error) {
-                console.log(error);
-                res.status(500).send({ error });
+                if (error.response) {
+                    res.status(error.response.status).send({ error });
+                } else {
+                    res.status(500).send({ error });
+                }
+                //console.error(error);
             }
         }
         res.send(party);
@@ -92,7 +97,7 @@ module.exports = {
             });
             party = resp.data;
         } catch (error) {
-            //console.log(error);
+            //console.error(error);
         }
 
         try {
@@ -106,8 +111,12 @@ module.exports = {
             }, headers);
             res.send({ isShipper: true });
         } catch (error) {
-            console.log(error);
-            res.status(500).send({ error });
+            if (error.response) {
+                res.status(error.response.status).send({ error });
+            } else {
+                res.status(500).send({ error });
+            }
+            //console.error(error);
         }
     },
     checkShipper: async (req, res) => {
@@ -130,8 +139,12 @@ module.exports = {
             await axios.get(process.env.DATA_SERVICE_URL + '/shippers/' + party.partyId);
             res.send({ isShipper: true });
         } catch (error) {
-            console.log(error);
-            res.status(500).send({ error });
+            if (error.response) {
+                res.status(error.response.status).send({ error });
+            } else {
+                res.status(500).send({ error });
+            }
+            //console.error(error);
         }
     },
     getByUserId: async (req, res) => {
@@ -145,8 +158,12 @@ module.exports = {
             });
             res.send(resp.data);
         } catch (error) {
-            console.log(error);
-            res.status(500).send({ error });
+            if (error.response) {
+                res.status(error.response.status).send({ error });
+            } else {
+                res.status(500).send({ error });
+            }
+            //console.error(error);
         }
     },
     getOne: async (req, res) => {
@@ -156,8 +173,12 @@ module.exports = {
             const resp = await axios.get(process.env.DATA_SERVICE_URL + '/parties/' + id);
             res.send(resp.data);
         } catch (error) {
-            console.log(error);
-            res.status(500).send({ error });
+            if (error.response) {
+                res.status(error.response.status).send({ error });
+            } else {
+                res.status(500).send({ error });
+            }
+            //console.error(error);
         }
     }
     /*

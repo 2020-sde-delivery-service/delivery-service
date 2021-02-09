@@ -4,6 +4,7 @@ let dotenv = require('dotenv');
 dotenv.config();
 
 module.exports = {
+    /*
     getOne: async (req, res) => {
         const id = req.params.id;
 
@@ -17,13 +18,18 @@ module.exports = {
                     id: id
                 }
             });
-            console.log(resp.data);
+            //console.log(resp.data);
             res.send(resp.data);
-        } catch (err) {
-            console.error(err);
-            res.status(500).send()
+        } catch (error) {
+            if (error.response) {
+                res.status(error.response.status).send({ error });
+            } else {
+                res.status(500).send({ error });
+            }
+            //console.error(error);
         }
     },
+    */
     getSingularDistance: async (req, res) => {
         const origin = req.query.origin;
         const destination = req.query.destination;
@@ -47,9 +53,13 @@ module.exports = {
             }
 
             res.send(mydata);
-        } catch (err) {
-            console.error(err);
-            res.status(500).send()
+        } catch (error) {
+            if (error.response) {
+                res.status(error.response.status).send({ error });
+            } else {
+                res.status(500).send({ error });
+            }
+            //console.error(error);
         }
     },
     getMatrix: async (req, res) => {
@@ -74,9 +84,13 @@ module.exports = {
             }
 
             res.send(mydata);
-        } catch (err) {
-            console.error(err);
-            res.status(500).send()
+        } catch (error) {
+            if (error.response) {
+                res.status(error.response.status).send({ error });
+            } else {
+                res.status(500).send({ error });
+            }
+            //console.error(error);
         }
     },
     getCoordinates: async (req, res) => {
@@ -100,9 +114,13 @@ module.exports = {
             }
 
             res.send(mydata);
-        } catch (err) {
-            console.error(err);
-            res.status(500).send()
+        } catch (error) {
+            if (error.response) {
+                res.status(error.response.status).send({ error });
+            } else {
+                res.status(500).send({ error });
+            }
+            //console.error(error);
         }
     }
 }

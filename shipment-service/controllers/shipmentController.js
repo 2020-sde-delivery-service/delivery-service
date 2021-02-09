@@ -14,9 +14,13 @@ module.exports = {
             const resp = await axios.post(process.env.DATA_SERVICE_URL + DELIVERY_REQUEST_API, req.body, headers);
             console.log(resp.data);
             res.send(resp.data);
-        } catch (err) {
-            console.error(err);
-            res.status(500).send()
+        } catch (error) {
+            if (error.response) {
+                res.status(error.response.status).send({ error });
+            } else {
+                res.status(500).send({ error });
+            }
+            //console.error(error);
         }
     },
     /*
@@ -45,9 +49,13 @@ module.exports = {
             const deliveryResp = await axios.get(process.env.DATA_SERVICE_URL + DELIVERY_REQUEST_API + "/" + deliveryRequestId);
 
             res.send(deliveryResp.data);
-        } catch (err) {
-            console.error(err);
-            res.status(500).send()
+        } catch (error) {
+            if (error.response) {
+                res.status(error.response.status).send({ error });
+            } else {
+                res.status(500).send({ error });
+            }
+            //console.error(error);
         }
     },
     setShipper: async (req, res) => {
@@ -74,9 +82,13 @@ module.exports = {
             const resp = await axios.patch(process.env.DATA_SERVICE_URL + DELIVERY_REQUEST_API + "/" + deliveryRequestId, data, headers);
             console.log(resp.data);
             res.send(resp.data);
-        } catch (err) {
-            console.error(err);
-            res.status(500).send()
+        } catch (error) {
+            if (error.response) {
+                res.status(error.response.status).send({ error });
+            } else {
+                res.status(500).send({ error });
+            }
+            //console.error(error);
         }
     },
     setStatus: async (req, res) => {
@@ -94,9 +106,13 @@ module.exports = {
             const resp = await axios.patch(process.env.DATA_SERVICE_URL + DELIVERY_REQUEST_API + "/" + deliveryRequestId, data, headers);
             console.log(resp.data);
             res.send(resp.data);
-        } catch (err) {
-            console.error(err);
-            res.status(500).send()
+        } catch (error) {
+            if (error.response) {
+                res.status(error.response.status).send({ error });
+            } else {
+                res.status(500).send({ error });
+            }
+            //console.error(error);
         }
     },
     acceptRequest: async (req, res) => {
@@ -143,9 +159,13 @@ module.exports = {
 
             console.log(data);
             res.send(data);
-        } catch (err) {
-            console.error(err);
-            res.status(500).send()
+        } catch (error) {
+            if (error.response) {
+                res.status(error.response.status).send({ error });
+            } else {
+                res.status(500).send({ error });
+            }
+            //console.error(error);
         }
         /*
 

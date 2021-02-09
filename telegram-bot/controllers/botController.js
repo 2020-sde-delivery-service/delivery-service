@@ -35,9 +35,13 @@ module.exports = {
                 ]));
 
             res.send({});
-        } catch (err) {
-            console.error(err);
-            res.status(500).send()
+        } catch (error) {
+            if (error.response) {
+                res.status(error.response.status).send({ error });
+            } else {
+                res.status(500).send({ error });
+            }
+            //console.error(error);
         }
 
     },
@@ -61,9 +65,13 @@ module.exports = {
         try {
             await bot.telegram.sendMessage(userId, text);
             res.send({});
-        } catch (err) {
-            console.error(err);
-            res.status(500).send()
+        } catch (error) {
+            if (error.response) {
+                res.status(error.response.status).send({ error });
+            } else {
+                res.status(500).send({ error });
+            }
+            //console.error(error);
         }
     },
     sendStatus: async (req, res) => {
@@ -96,9 +104,13 @@ module.exports = {
         try {
             await bot.telegram.sendMessage(userId, text);
             res.send({});
-        } catch (err) {
-            console.error(err);
-            res.status(500).send()
+        } catch (error) {
+            if (error.response) {
+                res.status(error.response.status).send({ error });
+            } else {
+                res.status(500).send({ error });
+            }
+            //console.error(error);
         }
     }
 }
