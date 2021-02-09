@@ -24,6 +24,7 @@ public class Point {
     private UUID pointId;
     private int seqId;
     private int suggestionSeqId;
+    private double estimatedCost;
     private UUID deliveryRequestId;
     private String requestType;
     private double lat;
@@ -34,7 +35,7 @@ public class Point {
     @JoinColumn(name = "trip_id")
     private Trip trip;
     @Column(name = "trip_id", updatable = false, insertable = false)
-    private String tripId;
+    private UUID tripId;
 
     @PrePersist
     public void prePersist() {

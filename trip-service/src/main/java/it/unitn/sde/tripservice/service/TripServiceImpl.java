@@ -24,6 +24,8 @@ import it.unitn.sde.tripservice.model.Point;
 import it.unitn.sde.tripservice.model.PointInputModel;
 import it.unitn.sde.tripservice.model.Trip;
 import it.unitn.sde.tripservice.model.TripModelInput;
+import it.unitn.sde.tripservice.model.People;
+import it.unitn.sde.tripservice.model.DistanceModel;
 import it.unitn.sde.tripservice.utils.Utils;
 
 /**
@@ -36,34 +38,68 @@ public class TripServiceImpl implements TripService {
     @Value("${dataservice.url}")
     private String dataServiceUrl;
 
+    @Value("${googlemapservice.url}")
+    private String googlemapservice;
+
+    @Value("${locationservice.url}")
+    private String locationServiceUrl;
+
     @Override
     public Trip createTrip(TripModelInput tripModelInput) {
-        DeliveryRequestModel deliveryRequest = restTemplate.getForObject(dataServiceUrl + ApiConstant.DELIVERY_REQUEST+"/"+tripModelInput.getDeliveryRequestId(),
-                DeliveryRequestModel.class);
-        Map<String, String> tripInput = new HashMap<>();
-        tripInput.put("shipperId", deliveryRequest.getAssignedShipperId().toString());
+
+        DeliveryRequestModel deliveryRequest = restTemplate.getForObject(dataServiceUrl + ApiConstant.DELIVERY_REQUEST
+                        +"/"+tripModelInput.getDeliveryRequestId(), DeliveryRequestModel.class);
 
         // if shipper is running a trip, get it here and put the points in
         //suggest only CREATED and FINISHED (2 status)
+        double addCost = 0;
         Trip trip = null;
-
+        Point lastPoint = null;
         try {
             //get current trip for shipper
             trip = restTemplate.getForObject(dataServiceUrl + ApiConstant.TRIP_OF_SHIPPER + "?shipperId=" +
                     deliveryRequest.getAssignedShipperId() + "&statusId=" + StatusEnum.TRIP_CREATED, Trip.class);
-        } catch (HttpClientErrorException.NotFound ex)   {
-            //else create trip
+            lastPoint = restTemplate.getForObject(dataServiceUrl + ApiConstant.LAST_POINT + "?tripId=" +
+                    trip.getTripId() + "&suggestionSeqId=" + trip.getSizeOfPoints(), Point.class);
+        } catch (HttpClientErrorException.NotFound ex) {
+            // shipper has no points
+            Map<String, String> tripInput = new HashMap<>();
+            tripInput.put("shipperId", deliveryRequest.getAssignedShipperId().toString());
             trip = restTemplate.postForObject(dataServiceUrl + ApiConstant.TRIP, tripInput, Trip.class);
         }
 
+        if(trip != null && lastPoint != null){
+            // shipper has trip
+            DistanceModel distance = restTemplate.getForObject(googlemapservice + ApiConstant.DISTANCE_API
+                    + "?origin=" + lastPoint.getLat() + "," + lastPoint.getLng()
+                    + "&destination=" + deliveryRequest.getPickupAddress(), DistanceModel.class);
+            addCost = distance.getDuration() + trip.getEstimatedTotalCost() - trip.getEstimatedCoveredCost();
+        } else {
+            // shipper has no trip
+            People people = restTemplate.getForObject(
+                    locationServiceUrl + ApiConstant.LOCATION_API_SHIPPER + "/" + deliveryRequest.getAssignedShipperId(), People.class);
+            DistanceModel distance = restTemplate.getForObject(googlemapservice + ApiConstant.DISTANCE_API
+                    + "?origin=" + people.getCurrentLocation().getPoint().getY()
+                    + "," + people.getCurrentLocation().getPoint().getX()
+                    + "&destination=" + deliveryRequest.getPickupAddress(), DistanceModel.class);
+            addCost = distance.getDuration();
+        }
+
+        DistanceModel distance = restTemplate.getForObject(googlemapservice + ApiConstant.DISTANCE_API
+                + "?origin=" + deliveryRequest.getPickupAddress()
+                + "&destination=" + deliveryRequest.getDeliveryAddress(), DistanceModel.class);
+
+        double deliveryCost = distance.getDuration();
+
         // create 2 point for pickup and delivery location
         List<PointInputModel> lPI = new ArrayList<>();
+
         double[] locations = Utils.covertStringLocationToNumber(deliveryRequest.getPickupLocation());
         lPI.add(new PointInputModel(trip.getSizeOfPoints() + 1, deliveryRequest.getDeliveryRequestId().toString(),
-                DeliveryRequestTypeEnum.PICKUP.name(), locations[0], locations[1], "/trips/" + trip.getTripId()));
+                DeliveryRequestTypeEnum.PICKUP.name(), locations[0], locations[1], "/trips/" + trip.getTripId(), addCost));
         locations = Utils.covertStringLocationToNumber(deliveryRequest.getDeliveryLocation());
         lPI.add(new PointInputModel(trip.getSizeOfPoints() + 2, deliveryRequest.getDeliveryRequestId().toString(),
-                DeliveryRequestTypeEnum.DELIVERY.name(), locations[0], locations[1], "/trips/" + trip.getTripId()));
+                DeliveryRequestTypeEnum.DELIVERY.name(), locations[0], locations[1], "/trips/" + trip.getTripId(), deliveryCost));
         lPI.stream().forEach(p -> addPoint(p));
         return trip;
     }
@@ -87,7 +123,8 @@ public class TripServiceImpl implements TripService {
         point = restTemplate.patchForObject(dataServiceUrl + ApiConstant.POINT + "/" + pointId, body, Point.class);
         body = new HashMap<>();
         body.put("currentFinishedSeqId", trip.getCurrentFinishedSeqId() + 1);
-        if (trip.getSizeOfPoints() == trip.getCurrentFinishedSeqId()+1)
+        // <= to avoid multiple request
+        if (trip.getSizeOfPoints() <= trip.getCurrentFinishedSeqId()+1)
             body.put("statusId", StatusEnum.TRIP_FINISHED);
         trip = restTemplate.patchForObject(dataServiceUrl + ApiConstant.TRIP + "/" + trip.getTripId(), body,
                 Trip.class);

@@ -1,4 +1,4 @@
-package it.unitn.sde.tripservice.model;
+package it.unitn.sde.shipperassignmentservice.model;
 
 import java.util.Date;
 

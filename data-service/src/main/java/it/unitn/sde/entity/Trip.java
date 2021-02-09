@@ -42,6 +42,43 @@ public class Trip {
         return points.size();
     }
 
+    @Transient
+    public int getCompletedNumber() {
+        if (points == null)
+            return 0;
+        int s = 0;
+        for (Point p : points){
+            if (StatusEnum.POINT_PROCESSED.name().equals(p.getStatusId())){
+                s++;
+            }
+        }
+        return s;
+    }
+
+    @Transient
+    public double getEstimatedTotalCost() {
+        if (points == null)
+            return 0;
+        double c = 0;
+        for (Point p : points){
+            c += p.getEstimatedCost();
+        }
+        return c;
+    }
+
+    @Transient
+    public double getEstimatedCoveredCost() {
+        if (points == null)
+            return 0;
+        double c = 0;
+        for (Point p : points){
+            if (StatusEnum.POINT_PROCESSED.name().equals(p.getStatusId())) {
+                c += p.getEstimatedCost();
+            }
+        }
+        return c;
+    }
+
     @PrePersist
     public void prePersist() {
         if (statusId == null) {

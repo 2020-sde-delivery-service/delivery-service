@@ -140,6 +140,7 @@ CREATE TABLE point (
 	  trip_id   UUID ,
 	  seq_id   NUMERIC,
 	  suggestion_seq_id   NUMERIC,
+	  estimated_cost   NUMERIC NOT NULL default 0,
 	  delivery_request_id UUID NOT NULL,
 	  request_type VARCHAR(60) NOT NULL, -- pickup/ delivery
 	  lat	NUMERIC NOT NULL,
