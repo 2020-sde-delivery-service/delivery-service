@@ -43,6 +43,12 @@ module.exports = {
     T_TRIP_MESSAGE: '🗺️ Trip',
     T_RECAP_MESSAGE: (entry) => '📍 Address: ' + entry.address + '\n📦 Action: ' + entry.requestType + '\n🆔 Shipment: ' + entry.deliveryRequestId + '\n' + 'Click this to process the point:\n/process' + entry.pointId.replace(/-/g, '_'),
 
+    //info
+    INFO_MESSAGE: '📦 Shipper info',
+    INFO_NAME: '🧑 Shipper: ',
+    INFO_NUMBER: '#️⃣ Number of trips: ',
+    INFO_POINTS: '🏆 Delivery points: ',
+
     //botController
     BC_ASK_MESSAGE: '📦 New shipment available',
     BC_STATUS_MESSAGE: '📦 Shipment status update',

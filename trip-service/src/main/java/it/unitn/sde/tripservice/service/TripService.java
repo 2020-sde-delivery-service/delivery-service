@@ -11,6 +11,7 @@ public interface TripService {
    public Trip createTrip(TripModelInput tripModelInput);
    public Point addPoint(PointInputModel pointInputModel);
    public Point completePoint(String pointId);
-   public Map<String, Object> getTrip(String pointId);
+   public Map<String, Object> getTrip(String shipperId);
+   public Map<String, Object> getTripInfo(String shipperId);
 
 }

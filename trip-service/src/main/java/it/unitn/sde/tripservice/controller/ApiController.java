@@ -50,4 +50,10 @@ public class ApiController {
         return ResponseEntity.ok().body(resp);
     }
 
+    @GetMapping("/trip-of-shipper-info/{shipperId}")
+    public ResponseEntity<?> getTripInfo(@PathVariable String shipperId) {
+        Map<String, Object> resp = tripService.getTripInfo(shipperId);
+        return ResponseEntity.ok().body(resp);
+    }
+
 }

@@ -10,6 +10,7 @@ const trip = require('./trip');
 const becomeShipperWizard = require('./becomeShipperWizard');
 const acceptDeliveryWizard = require('./acceptDeliveryWizard');
 const status = require('./status');
+const info = require('./info');
 const processWizard = require('./processWizard');
 const { checkShipper, acceptShipment, setPosition } = require('./helpers');
 const strings = require('../constant/strings');
@@ -43,7 +44,7 @@ bot.start(async (ctx) => {
 });
 
 bot.command('help', (ctx) => {
-    return ctx.reply('Commands list: \n/start\n/help\n/newdelivery\n/status\n/trip\n/becomeshipper\n/usermode\n/shippermode')
+    return ctx.reply('Commands list: \n/start\n/help\n/newdelivery\n/status\n/trip\n/info\n/becomeshipper\n/usermode\n/shippermode')
 });
 bot.command('newdelivery', (ctx) => { ctx.scene.enter('super-wizard') });
 bot.command('pickup', async (ctx) => {
@@ -72,7 +73,14 @@ bot.command('trip', async (ctx) => {
 });
 bot.command('becomeshipper', (ctx) => ctx.scene.enter('shipper-wizard'));
 bot.command('status', status);
-
+bot.command('info', async (ctx) => {
+    let ok = await checkShipper(ctx.from.id);
+    if (ok) {
+        info(ctx);
+    } else {
+        ctx.reply(strings.NOSHIPPER_MESSAGE);
+    }
+});
 /*
 bot.hears(/\/acceptDelivery(.+)/, async (ctx) => {
     ctx.session.deliveryId = ctx.match[1];
@@ -125,10 +133,18 @@ bot.hears(/\/process(.+)/, async (ctx) => {
 });
 
 
-bot.on('location', (ctx) => { setPosition(ctx.chat.id, ctx.message.location) });
-bot.on('edited_message', (ctx) => {
-    if (ctx.editedMessage.location) {
-        setPosition(ctx.chat.id, ctx.editedMessage.location);
+bot.on('location', async (ctx) => {
+    let ok = await checkShipper(ctx.from.id);
+    if (ok) {
+        setPosition(ctx.chat.id, ctx.message.location);
+    }
+});
+bot.on('edited_message', async (ctx) => {
+    let ok = await checkShipper(ctx.from.id);
+    if (ok) {
+        if (ctx.editedMessage.location) {
+            setPosition(ctx.chat.id, ctx.editedMessage.location);
+        }
     }
 });
 bot.command('usermode', (ctx) =>
@@ -140,7 +156,7 @@ bot.command('usermode', (ctx) =>
 
 bot.command('shippermode', (ctx) =>
     ctx.reply('Shipper mode set', Markup
-        .keyboard(['/trip'])
+        .keyboard(['/trip', '/info'])
         .resize()
     )
 )

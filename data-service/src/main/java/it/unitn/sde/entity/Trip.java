@@ -82,7 +82,7 @@ public class Trip {
     @PrePersist
     public void prePersist() {
         if (statusId == null) {
-            statusId = StatusEnum.TRIP_CREATED.name();
+            statusId = StatusEnum.TRIP_STARTED.name();
         }
         if (createdDate == null)
             createdDate = new Date();

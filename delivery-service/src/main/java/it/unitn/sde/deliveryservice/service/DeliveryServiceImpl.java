@@ -68,7 +68,6 @@ public class DeliveryServiceImpl implements DeliveryService {
         public void processDeliveryRequest(DeliveryRequestModel deliveryModel) {
                 restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
                 RequestModel requestModel = new RequestModel();
-
                 requestModel.setPickup(new LocationModel(
                                 Utils.covertStringLocationToNumber(deliveryModel.getPickupLocation())));
                 requestModel.setDelivery(new LocationModel(
@@ -76,7 +75,7 @@ public class DeliveryServiceImpl implements DeliveryService {
                 ListCandidateModel candidates = restTemplate.postForObject(
                                 shipperAssignmentService + ApiConstant.GET_CANDIDATE, requestModel,
                                 ListCandidateModel.class);
-                String status = StatusEnum.DELIVERY_REQUEST_CREATED.name();
+                boolean accepted = false;
                 for (int i = 0; i < candidates.getData().size(); i++) {
                         log.info("start " + i);
                         Map<String, String> body = new HashMap<>();
@@ -99,6 +98,7 @@ public class DeliveryServiceImpl implements DeliveryService {
                                         DeliveryRequestModel.class);
                         if (StatusEnum.DELIVERY_REQUEST_ACCEPTED.name().equals(re.getStatusId())) {
                                 log.info("assignment process completed");
+                                accepted = true;
                                 restTemplate.postForObject(telegramBotUrl + ApiConstant.SEND_STATUS, re, Object.class);
                                 Map<String, String> tripInput = new HashMap<>();
                                 tripInput.put("deliveryRequestId", re.getDeliveryRequestId().toString());
@@ -108,18 +108,7 @@ public class DeliveryServiceImpl implements DeliveryService {
                         }
                 }
                 //thread seems to be waiting for all requests
-                //maybe wait 5 minutes and check again
-                try {
-                        Thread.sleep(rejectWaitTime);
-                } catch (InterruptedException e) {
-                        e.printStackTrace();
-                }
-
-                DeliveryRequestModel re = restTemplate.getForObject(
-                        shimentServiceUrl + ApiConstant.GET_DELIVERY_REQUEST_API + "/"
-                                + deliveryModel.getDeliveryRequestId().toString(),
-                        DeliveryRequestModel.class);
-                if (StatusEnum.DELIVERY_REQUEST_CREATED.name().equals(re.getStatusId())) {
+                if (!accepted) {
                         restTemplate.postForObject(telegramBotUrl + ApiConstant.SEND_NODELIVERY, deliveryModel, Object.class);
                 }
         }

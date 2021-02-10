@@ -163,5 +163,21 @@ module.exports = {
             //console.error(err);
         }
     },
+    getInfo: async (shipperId) => {
+
+        let id;
+        try {
+            const idResp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/byUserId/' + shipperId);
+            id = idResp.data.partyId;
+
+            const tripResp = await axios.get(process.env.TRIP_SERVICE_URL + '/trip-of-shipper-info/' + id);
+
+            return tripResp.data;
+
+        } catch (err) {
+            //console.error(err);
+            return {};
+        }
+    },
 
 }

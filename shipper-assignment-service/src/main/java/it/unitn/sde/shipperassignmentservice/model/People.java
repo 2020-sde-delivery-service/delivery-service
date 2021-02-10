@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class People {
-    String partyId;
-    Location currentLocation;
+    private String partyId;
+    private Location currentLocation;
 
 }

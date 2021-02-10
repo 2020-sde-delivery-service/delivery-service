@@ -7,14 +7,16 @@ import java.util.Map;
 
 import java.lang.Object;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.client.HttpClientErrorException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.core.type.TypeReference;
 
 import it.unitn.sde.tripservice.constant.ApiConstant;
 import it.unitn.sde.tripservice.constant.DeliveryRequestTypeEnum;
@@ -51,16 +53,12 @@ public class TripServiceImpl implements TripService {
                         +"/"+tripModelInput.getDeliveryRequestId(), DeliveryRequestModel.class);
 
         // if shipper is running a trip, get it here and put the points in
-        //suggest only CREATED and FINISHED (2 status)
         double addCost = 0;
         Trip trip = null;
-        Point lastPoint = null;
         try {
             //get current trip for shipper
             trip = restTemplate.getForObject(dataServiceUrl + ApiConstant.TRIP_OF_SHIPPER + "?shipperId=" +
-                    deliveryRequest.getAssignedShipperId() + "&statusId=" + StatusEnum.TRIP_CREATED, Trip.class);
-            lastPoint = restTemplate.getForObject(dataServiceUrl + ApiConstant.LAST_POINT + "?tripId=" +
-                    trip.getTripId() + "&suggestionSeqId=" + trip.getSizeOfPoints(), Point.class);
+                    deliveryRequest.getAssignedShipperId() + "&statusId=" + StatusEnum.TRIP_STARTED.name(), Trip.class);
         } catch (HttpClientErrorException.NotFound ex) {
             // shipper has no points
             Map<String, String> tripInput = new HashMap<>();
@@ -68,8 +66,10 @@ public class TripServiceImpl implements TripService {
             trip = restTemplate.postForObject(dataServiceUrl + ApiConstant.TRIP, tripInput, Trip.class);
         }
 
-        if(trip != null && lastPoint != null){
+        if(trip.getSizeOfPoints() > 0){
             // shipper has trip
+            Point lastPoint = restTemplate.getForObject(dataServiceUrl + ApiConstant.LAST_POINT + "?tripId=" +
+                    trip.getTripId() + "&suggestionSeqId=" + trip.getSizeOfPoints(), Point.class);
             DistanceModel distance = restTemplate.getForObject(googlemapservice + ApiConstant.DISTANCE_API
                     + "?origin=" + lastPoint.getLat() + "," + lastPoint.getLng()
                     + "&destination=" + deliveryRequest.getPickupAddress(), DistanceModel.class);
@@ -123,9 +123,8 @@ public class TripServiceImpl implements TripService {
         point = restTemplate.patchForObject(dataServiceUrl + ApiConstant.POINT + "/" + pointId, body, Point.class);
         body = new HashMap<>();
         body.put("currentFinishedSeqId", trip.getCurrentFinishedSeqId() + 1);
-        // <= to avoid multiple request
-        if (trip.getSizeOfPoints() <= trip.getCurrentFinishedSeqId()+1)
-            body.put("statusId", StatusEnum.TRIP_FINISHED);
+        if (trip.getSizeOfPoints() == trip.getCompletedNumber()+1)
+            body.put("statusId", StatusEnum.TRIP_FINISHED.name());
         trip = restTemplate.patchForObject(dataServiceUrl + ApiConstant.TRIP + "/" + trip.getTripId(), body,
                 Trip.class);
         return point;
@@ -134,20 +133,45 @@ public class TripServiceImpl implements TripService {
     @Override
     public Map<String, Object> getTrip(String shipperId) {
         restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
+
         Trip trip = restTemplate.getForObject(dataServiceUrl + ApiConstant.TRIP_OF_SHIPPER + "?shipperId=" +
-                shipperId + "&statusId=" + StatusEnum.TRIP_CREATED, Trip.class);
+                shipperId + "&statusId=" + StatusEnum.TRIP_STARTED.name(), Trip.class);
         String body = restTemplate.getForObject(dataServiceUrl + ApiConstant.TRIP + "/" + trip.getTripId() +
                 ApiConstant.POINT, String.class);
+        Gson gson = new Gson();
+        JsonObject jsonObject = gson.fromJson(body, JsonObject.class);
+        List<Point> points = gson.fromJson(jsonObject.getAsJsonObject("_embedded").getAsJsonArray("points"),
+                new TypeToken<List<Point>>() {}.getType());
+
         Map<String, Object> resp = new HashMap<>();
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            Map<String, Map<String, Object>> map = mapper.readValue(body, new TypeReference<Map<String, Map<String, Object>>>() {
-            });
-            resp.put("trip", trip);
-            resp.put("points", map.get("_embedded").get("points"));
-        } catch (Exception e) {
-        e.printStackTrace();
+        resp.put("trip", trip);
+        resp.put("points", points);
+
+        return resp;
     }
+
+    @Override
+    public Map<String, Object> getTripInfo(String shipperId) {
+        restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
+        String response = restTemplate.getForObject(dataServiceUrl + ApiConstant.TRIPS_OF_SHIPPER + "?shipperId=" +
+                        shipperId, String.class);
+        Gson gson = new Gson();
+        JsonObject jsonObject = gson.fromJson(response, JsonObject.class);
+        List<Trip> trips = gson.fromJson(jsonObject.getAsJsonObject("_embedded").getAsJsonArray("trips"),
+                new TypeToken<List<Trip>>() {}.getType());
+
+        int numberOfTrips = 0;
+        double deliveryPoints = 0;
+
+        for (Trip t : trips){
+            numberOfTrips++;
+            deliveryPoints += t.getEstimatedCoveredCost();
+        }
+
+        Map<String, Object> resp = new HashMap<>();
+        resp.put("numberOfTrips", numberOfTrips);
+        resp.put("deliveryPoints", deliveryPoints);
+
         return resp;
     }
 

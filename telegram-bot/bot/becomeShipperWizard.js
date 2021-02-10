@@ -11,7 +11,7 @@ step1Handler.action('accept', async (ctx) => {
     await ctx.editMessageText(strings.BSW_ASK_MESSAGE);
     if (ok) {
         ctx.reply(strings.BSW_ACCEPT_MESSAGE, Markup
-            .keyboard(['/trip'])
+            .keyboard(['/trip', '/info'])
             .resize()
         );
     } else {
@@ -30,7 +30,7 @@ step1Handler.command('accept', async (ctx) => {
     await ctx.editMessageText(strings.BSW_ASK_MESSAGE);
     if (ok) {
         ctx.reply(strings.BSW_ACCEPT_MESSAGE, Markup
-            .keyboard(['/trip'])
+            .keyboard(['/trip', 'info'])
             .resize()
         );
     } else {

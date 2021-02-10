@@ -108,6 +108,7 @@ services:
       DELIVERY_SERVICE_URL: "http://delivery-service:8080"
       LOCATION_SERVICE_URL: "http://location-service:8080"
       STATUS_SERVICE_URL: "http://status-service:8080"
+      TRIP_SERVICE_URL: "http://trip-service:8080"
 
   status-service:
     build:
