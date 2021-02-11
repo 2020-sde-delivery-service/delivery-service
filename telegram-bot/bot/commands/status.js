@@ -1,6 +1,5 @@
-const strings = require('../constant/strings');
-
-const getShipmentsStatus = require('./helpers').getShipmentsStatus;
+const strings = require('../../constant/strings');
+const getShipmentsStatus = require('../helpers').getShipmentsStatus;
 
 const status = async (ctx) => {
     let status = await getShipmentsStatus(ctx.chat.id);

@@ -1,8 +1,7 @@
-const strings = require('../constant/strings');
+const strings = require('../../constant/strings');
+const getInfo = require('../helpers').getInfo;
 
-const getInfo = require('./helpers').getInfo;
-
-const status = async (ctx) => {
+const info = async (ctx) => {
     let info = await getInfo(ctx.chat.id);
     let message = strings.INFO_MESSAGE + '\n\n' + strings.INFO_NAME + ctx.from.first_name + '\n'
         + strings.INFO_NUMBER + info.numberOfTrips + '\n' + strings.INFO_POINTS + parseInt(info.deliveryPoints);
@@ -12,4 +11,4 @@ const status = async (ctx) => {
     );
 };
 
-module.exports = status;
+module.exports = info;

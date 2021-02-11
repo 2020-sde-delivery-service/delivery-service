@@ -1,6 +1,5 @@
-const strings = require('../constant/strings');
-
-const getTrip = require('./helpers').getTrip;
+const strings = require('../../constant/strings');
+const getTrip = require('../helpers').getTrip;
 
 const trip = async (ctx) => {
     let trip = await getTrip(ctx.chat.id);

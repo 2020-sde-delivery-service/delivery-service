@@ -4,6 +4,11 @@ const headers = {
     "Content-Type": "application/json"
 }
 
+const getPartyId = async (userId) => {
+    const resp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/byUserId/' + userId);
+    return resp.data.partyId;
+};
+
 module.exports = {
     getCorrectAddress: async (address) => {
         try {
@@ -38,10 +43,8 @@ module.exports = {
     },
     getShipmentsStatus: async (userId) => {
 
-        let partyId;
         try {
-            const idResp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/byUserId/' + userId);
-            partyId = idResp.data.partyId;
+            const partyId = await getPartyId(userId);
 
             const resp = await axios.get(process.env.SHIPMENT_SERVICE_URL + '/shipment/v1/deliveryRequest/ofuser/' + partyId);
             return resp.data;
@@ -68,10 +71,8 @@ module.exports = {
     checkShipper: async (userId) => {
 
         let ok = false;
-        let partyId;
         try {
-            const idResp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/byUserId/' + userId);
-            partyId = idResp.data.partyId;
+            const partyId = await getPartyId(userId);
 
             const resp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/' + partyId + '/shipper');
             ok = resp.data.isShipper;
@@ -85,10 +86,8 @@ module.exports = {
     setUserToShipper: async (userId) => {
 
         let ok = false;
-        let partyId;
         try {
-            const idResp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/byUserId/' + userId);
-            partyId = idResp.data.partyId;
+            const partyId = await getPartyId(userId);
 
             const resp = await axios.post(process.env.USER_SERVICE_URL + '/users/v1/' + partyId + '/shipper');
             ok = resp.data.isShipper;
@@ -140,8 +139,7 @@ module.exports = {
 
         let partyId;
         try {
-            const resp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/byUserId/' + userId);
-            partyId = resp.data.partyId;
+            partyId = await getPartyId(userId);
         } catch (err) {
             //console.error(err);
         }
@@ -152,8 +150,7 @@ module.exports = {
 
         let partyId;
         try {
-            const resp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/byUserId/' + userId);
-            partyId = resp.data.partyId;
+            partyId = await getPartyId(userId);
         } catch (err) {
             //console.error(err);
             return;
@@ -176,10 +173,8 @@ module.exports = {
     },
     getInfo: async (userId) => {
 
-        let partyId;
         try {
-            const idResp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/byUserId/' + userId);
-            partyId = idResp.data.partyId;
+            const partyId = await getPartyId(userId);
 
             const tripResp = await axios.get(process.env.TRIP_SERVICE_URL + '/trip-of-shipper-info/' + partyId);
             return tripResp.data;

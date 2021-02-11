@@ -1,7 +1,7 @@
-const { Composer, Markup, Scenes, session, Telegraf } = require('telegraf');
+const { Composer, Markup, Scenes } = require('telegraf');
 
-const strings = require('../constant/strings');
-const { getCorrectAddress, createDeliveryRequest, getCustomerId } = require('./helpers');
+const strings = require('../../constant/strings');
+const { getCorrectAddress, createDeliveryRequest, getCustomerId } = require('../helpers');
 
 const step1Handler = new Composer();
 const step2Handler = new Composer();
