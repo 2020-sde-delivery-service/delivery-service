@@ -35,11 +35,11 @@ module.exports = {
 
         console.log("login -start");
 
-        const id = req.body.id;
+        const userId = req.body.userId;
         const firstName = req.body.firstName;
         const lastName = req.body.lastName;
 
-        if (!id) {
+        if (!userId) {
             return res.status(400).send();
         }
 
@@ -48,7 +48,7 @@ module.exports = {
             // SEARCH USER WITH chatId
             const resp = await axios.get(process.env.DATA_SERVICE_URL + '/parties/search/findByUserId', {
                 params: {
-                    userId: id
+                    userId: userId
                 }
             });
             party = resp.data;
@@ -60,7 +60,7 @@ module.exports = {
             //SAVE USER
             try {
                 const partyRes = await axios.post(process.env.DATA_SERVICE_URL + '/parties', {
-                    userId: id
+                    userId: userId
                 }, headers);
                 party = partyRes.data;
                 await axios.post(process.env.DATA_SERVICE_URL + '/persons', {
@@ -91,28 +91,15 @@ module.exports = {
 
         console.log("set-shipper -start");
 
-        const id = req.params.id;
-
-        let party;
-        try {
-            // SEARCH USER WITH chatId
-            const resp = await axios.get(process.env.DATA_SERVICE_URL + '/parties/search/findByUserId', {
-                params: {
-                    userId: id
-                }
-            });
-            party = resp.data;
-        } catch (error) {
-            //console.error(error);
-        }
+        const partyId = req.params.partyId;
 
         try {
             await axios.post(process.env.DATA_SERVICE_URL + '/partySecurityGroups', {
-                partyId: party.partyId,
+                partyId: partyId,
                 groupId: SHIPPER
             }, headers);
             await axios.post(process.env.DATA_SERVICE_URL + '/shippers', {
-                shipperId: party.partyId,
+                shipperId: partyId,
                 currentLocation: "null"
             }, headers);
             res.send({ isShipper: true });
@@ -129,23 +116,15 @@ module.exports = {
 
         console.log("check-shipper -start");
 
-        const id = req.params.id;
+        const partyId = req.params.partyId;
 
-        let party;
         try {
-            // SEARCH USER WITH chatId
-            const resp = await axios.get(process.env.DATA_SERVICE_URL + '/parties/search/findByUserId', {
+            await axios.get(process.env.DATA_SERVICE_URL + '/partySecurityGroups/search/findByPartyIdAndGroupId', {
                 params: {
-                    userId: id
+                    partyId: partyId,
+                    groupId: SHIPPER
                 }
             });
-            party = resp.data;
-        } catch (error) {
-            //console.log(error);
-        }
-
-        try {
-            await axios.get(process.env.DATA_SERVICE_URL + '/shippers/' + party.partyId);
             res.send({ isShipper: true });
         } catch (error) {
             if (error.response) {
@@ -182,10 +161,35 @@ module.exports = {
 
         console.log("get-one -start");
 
-        const id = req.params.id;
+        const partyId = req.params.partyId;
 
         try {
-            const resp = await axios.get(process.env.DATA_SERVICE_URL + '/parties/' + id);
+            const resp = await axios.get(process.env.DATA_SERVICE_URL + '/parties/' + partyId);
+            res.send(resp.data);
+        } catch (error) {
+            if (error.response) {
+                res.status(error.response.status).send({ error });
+            } else {
+                res.status(500).send({ error });
+            }
+            //console.error(error);
+        }
+    },
+    setLocation: async (req, res) => {
+
+        console.log("set-location -start");
+
+        const partyId = req.params.partyId;
+        const data = req.body;
+
+        if (!data.currentLocation) {
+            return res.status(400).send();
+        }
+
+        data.partyId = partyId;
+
+        try {
+            const resp = await axios.post(process.env.LOCATION_SERVICE_URL + '/peoples', data, headers);
             res.send(resp.data);
         } catch (error) {
             if (error.response) {

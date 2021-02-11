@@ -20,14 +20,14 @@ module.exports = {
 
         return address;
     },
-    getTrip: async (shipperId) => {
+    getTrip: async (userId) => {
 
-        let id;
+        let partyId;
         try {
-            const idResp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/byUserId/' + shipperId);
-            id = idResp.data.partyId;
+            const idResp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/byUserId/' + userId);
+            partyId = idResp.data.partyId;
 
-            const tripResp = await axios.get(process.env.STATUS_SERVICE_URL + '/status/v1/trip/' + id);
+            const tripResp = await axios.get(process.env.STATUS_SERVICE_URL + '/status/v1/trip/' + partyId);
 
             return tripResp.data.points.filter(p => p.statusId == statusStrings.POINT_ASSIGNED);
 
@@ -38,13 +38,12 @@ module.exports = {
     },
     getShipmentsStatus: async (userId) => {
 
-        let id;
+        let partyId;
         try {
             const idResp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/byUserId/' + userId);
-            id = idResp.data.partyId;
+            partyId = idResp.data.partyId;
 
-            const resp = await axios.get(process.env.SHIPMENT_SERVICE_URL + '/shipment/v1/deliveryRequest/ofuser/' + id);
-
+            const resp = await axios.get(process.env.SHIPMENT_SERVICE_URL + '/shipment/v1/deliveryRequest/ofuser/' + partyId);
             return resp.data;
 
         } catch (err) {
@@ -54,6 +53,7 @@ module.exports = {
 
     },
     createDeliveryRequest: async (delivery) => {
+
         let ok = false;
         try {
             const resp = await axios.post(process.env.DELIVERY_SERVICE_URL + '/create-delivery-request', delivery, headers);
@@ -65,22 +65,34 @@ module.exports = {
 
         return ok;
     },
-    checkShipper: async (chatId) => {
+    checkShipper: async (userId) => {
+
         let ok = false;
+        let partyId;
         try {
-            const resp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/' + chatId + '/shipper');
+            const idResp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/byUserId/' + userId);
+            partyId = idResp.data.partyId;
+
+            const resp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/' + partyId + '/shipper');
             ok = resp.data.isShipper;
+
         } catch (err) {
             //console.error(err);
         }
 
         return ok;
     },
-    setUserToShipper: async (chatId) => {
+    setUserToShipper: async (userId) => {
+
         let ok = false;
+        let partyId;
         try {
-            const resp = await axios.post(process.env.USER_SERVICE_URL + '/users/v1/' + chatId + '/shipper');
+            const idResp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/byUserId/' + userId);
+            partyId = idResp.data.partyId;
+
+            const resp = await axios.post(process.env.USER_SERVICE_URL + '/users/v1/' + partyId + '/shipper');
             ok = resp.data.isShipper;
+
         } catch (err) {
             //console.error(err);
         }
@@ -88,8 +100,6 @@ module.exports = {
         return ok;
     },
     acceptShipment: async (deliveryRequestId) => {
-
-        //should pass through delivery service
 
         let ok = false;
         try {
@@ -115,6 +125,7 @@ module.exports = {
         return ok;
     },
     start: async (loginData) => {
+
         let ok = false;
         try {
             const resp = await axios.post(process.env.USER_SERVICE_URL + '/users/v1/login', loginData);
@@ -125,30 +136,30 @@ module.exports = {
 
         return ok;
     },
-    getCustomerId: async (chatId) => {
-        let id;
+    getCustomerId: async (userId) => {
+
+        let partyId;
         try {
-            const resp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/byUserId/' + chatId);
-            id = resp.data.partyId;
+            const resp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/byUserId/' + userId);
+            partyId = resp.data.partyId;
         } catch (err) {
             //console.error(err);
         }
 
-        return id;
+        return partyId;
     },
-    setPosition: async (chatId, location) => {
+    setPosition: async (userId, location) => {
 
-        let id;
+        let partyId;
         try {
-            const resp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/byUserId/' + chatId);
-            id = resp.data.partyId;
+            const resp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/byUserId/' + userId);
+            partyId = resp.data.partyId;
         } catch (err) {
             //console.error(err);
             return;
         }
 
         let data = {
-            "partyId": id,
             "currentLocation": {
                 "point": {
                     "x": location.longitude,
@@ -158,20 +169,19 @@ module.exports = {
         }
 
         try {
-            await axios.post(process.env.LOCATION_SERVICE_URL + '/peoples', data, headers);
+            await axios.post(process.env.USER_SERVICE_URL + '/users/v1/' + partyId + '/location', data, headers);
         } catch (err) {
             //console.error(err);
         }
     },
-    getInfo: async (shipperId) => {
+    getInfo: async (userId) => {
 
-        let id;
+        let partyId;
         try {
-            const idResp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/byUserId/' + shipperId);
-            id = idResp.data.partyId;
+            const idResp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/byUserId/' + userId);
+            partyId = idResp.data.partyId;
 
-            const tripResp = await axios.get(process.env.TRIP_SERVICE_URL + '/trip-of-shipper-info/' + id);
-
+            const tripResp = await axios.get(process.env.TRIP_SERVICE_URL + '/trip-of-shipper-info/' + partyId);
             return tripResp.data;
 
         } catch (err) {

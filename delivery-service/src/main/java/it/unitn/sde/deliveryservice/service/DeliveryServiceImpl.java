@@ -109,7 +109,14 @@ public class DeliveryServiceImpl implements DeliveryService {
                 }
                 //thread seems to be waiting for all requests
                 if (!accepted) {
-                        restTemplate.postForObject(telegramBotUrl + ApiConstant.SEND_NODELIVERY, deliveryModel, Object.class);
+                        Map<String, String> body = new HashMap<>();
+                        body.put("statusId", StatusEnum.DELIVERY_REQUEST_REJECTED.name());
+                        DeliveryRequestModel deliveryRequestModel = restTemplate.postForObject(
+                                shimentServiceUrl + ApiConstant.REJECT_DELIVERY_API_0 + "/"
+                                        + deliveryModel.getDeliveryRequestId().toString()
+                                        + ApiConstant.REJECT_DELIVERY_API_1,
+                                body, DeliveryRequestModel.class);
+                        restTemplate.postForObject(telegramBotUrl + ApiConstant.SEND_NODELIVERY, deliveryRequestModel, Object.class);
                 }
         }
 }

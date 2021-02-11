@@ -26,7 +26,7 @@ bot.use(stage.middleware());
 bot.start(async (ctx) => {
 
     const loginData = {
-        id: ctx.from.id,
+        userId: ctx.from.id,
         firstName: ctx.from.first_name,
         lastName: ctx.from.last_name
     }

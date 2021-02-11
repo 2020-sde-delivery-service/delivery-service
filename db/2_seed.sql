@@ -19,6 +19,7 @@ INSERT INTO status (status_id, status_type_id, status_code, sequence_id, descrip
 INSERT INTO status (status_id, status_type_id, status_code, sequence_id, description, last_updated_stamp, created_stamp) VALUES ('DELIVERY_REQUEST_ACCEPTED', 'DELIVERY_REQUEST_STATUS', 'ACCEPTED', 1, 'Delivery request accepted', NOW(), NOW());
 INSERT INTO status (status_id, status_type_id, status_code, sequence_id, description, last_updated_stamp, created_stamp) VALUES ('DELIVERY_REQUEST_PROCESSING', 'DELIVERY_REQUEST_STATUS', 'PROCESSING', 2, 'Delivery request processing', NOW(), NOW());
 INSERT INTO status (status_id, status_type_id, status_code, sequence_id, description, last_updated_stamp, created_stamp) VALUES ('DELIVERY_REQUEST_DELIVERIED', 'DELIVERY_REQUEST_STATUS', 'DELIVERIED', 3, 'Delivery request deliveried', NOW(), NOW());
+INSERT INTO status (status_id, status_type_id, status_code, sequence_id, description, last_updated_stamp, created_stamp) VALUES ('DELIVERY_REQUEST_REJECTED', 'DELIVERY_REQUEST_STATUS', 'REJECTED', 3, 'Delivery request rejected', NOW(), NOW());
 
 
 INSERT INTO status (status_id, status_type_id, status_code, sequence_id, description, last_updated_stamp, created_stamp) VALUES ('TRIP_STARTED', 'TRIP_STATUS', 'STARTED', 2, 'Trip processing', NOW(), NOW());
