@@ -40,8 +40,6 @@ public class DeliveryServiceImpl implements DeliveryService {
         @Value("${maximumwaittime}")
         private long maximumWaitTime;
 
-        @Value("${rejectwaittime}")
-        private long rejectWaitTime;
         @Value("${telegrambot.url}")
         private String telegramBotUrl;
 

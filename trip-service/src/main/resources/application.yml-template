@@ -6,8 +6,10 @@ server:
 
 dataservice:
   url: ${DATA_SERVICE_URL}
-
-
+googlemapservice:
+  url: ${GOOGLEMAP_SERVICE_URL}
+locationservice:
+  url: ${LOCATION_SERVICE_URL}
 logging:
   file:
     path: logs

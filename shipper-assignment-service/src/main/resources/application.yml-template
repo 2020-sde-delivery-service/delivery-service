@@ -8,7 +8,8 @@ dataservice:
   url: '${DATA_SERVICE_URL}'
 locationservice:
   url: '${LOCATION_SERVICE_URL}'
-
+googlemapservice:
+  url: '${GOOGLEMAP_SERVICE_URL}'
 radius : 
   limit : '${RADIUS_LIMIT}'
 logging:
@@ -22,5 +23,4 @@ logging:
         baseweb : DEBUG
     org:
       springframework: INFO
-  config: classpath:logback-dev.xml
   config: classpath:logback-dev.xml

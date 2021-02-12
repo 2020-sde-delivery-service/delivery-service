@@ -95,7 +95,6 @@ services:
       TRIP_SERVICE_URL: "http://trip-service:8080"
       TELEGRAM_BOT_URL: "http://telegram-bot:8080"
       MAXIMUM_WAIT_TIME: 50000
-      REJECT_WAIT_TIME: 60000
 
   telegram-bot:
     build:
