@@ -39,7 +39,7 @@ public class ApiController {
     }
 
     @PostMapping("/complete-point/{pointId}")
-    public ResponseEntity<?> addPoints(@PathVariable String pointId) {
+    public ResponseEntity<?> point(@PathVariable String pointId) {
         Point point = tripService.completePoint(pointId);
         return ResponseEntity.ok().body(point);
     }
