@@ -37,7 +37,7 @@ module.exports = {
                     Markup.button.callback(strings.ACCEPT_BUTTON, 'acceptDelivery' + deliveryRequest.deliveryRequestId),
                 ]));
 
-            res.send({});
+            res.send({ "success": true });
         } catch (error) {
             if (error.response) {
                 res.status(error.response.status).send({ error });
@@ -70,7 +70,7 @@ module.exports = {
 
         try {
             await bot.telegram.sendMessage(userId, text);
-            res.send({});
+            res.send({ "success": true });
         } catch (error) {
             if (error.response) {
                 res.status(error.response.status).send({ error });
@@ -112,7 +112,7 @@ module.exports = {
 
         try {
             await bot.telegram.sendMessage(userId, text);
-            res.send({});
+            res.send({ "success": true });
         } catch (error) {
             if (error.response) {
                 res.status(error.response.status).send({ error });
