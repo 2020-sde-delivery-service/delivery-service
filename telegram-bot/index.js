@@ -23,7 +23,7 @@ var port = process.env.PORT || process.env.SERVER_PORT;
 
 app.get('/', (req, res) => res.send('Hello World with Express'));
 
-app.use(botRoutes);
+app.use('/api/v1', botRoutes);
 
 const bot = require('./bot/bot');
 

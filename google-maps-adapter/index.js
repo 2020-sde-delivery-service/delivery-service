@@ -23,7 +23,7 @@ var port = process.env.PORT || process.env.SERVER_PORT;
 
 app.get('/', (req, res) => res.send('Hello World with Express'));
 
-app.use(mapsRoutes);
+app.use('/api/v1', mapsRoutes);
 
 var server = app.listen(port, function () {
     console.log("Running ApiServer on port " + port);

@@ -20,7 +20,7 @@ module.exports = {
 
         let userId;
         try {
-            const resp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/' + deliveryRequest.assignedShipperId);
+            const resp = await axios.get(process.env.USER_SERVICE_URL + '/api/v1/users/' + deliveryRequest.assignedShipperId);
             userId = resp.data.userId;
         } catch (err) {
             //console.error(err);
@@ -60,7 +60,7 @@ module.exports = {
 
         let userId;
         try {
-            const resp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/' + deliveryRequest.customerId);
+            const resp = await axios.get(process.env.USER_SERVICE_URL + '/api/v1/users/' + deliveryRequest.customerId);
             userId = resp.data.userId;
         } catch (err) {
             //console.error(err);
@@ -92,7 +92,7 @@ module.exports = {
 
         let userId;
         try {
-            const resp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/' + deliveryRequest.customerId);
+            const resp = await axios.get(process.env.USER_SERVICE_URL + '/api/v1/users/' + deliveryRequest.customerId);
             userId = resp.data.userId;
         } catch (err) {
             //console.error(err);

@@ -101,7 +101,7 @@ module.exports = {
     },
     setStatus: async (req, res) => {
 
-        console.log("get-status -start");
+        console.log("set-status -start");
 
         const deliveryRequestId = req.params.deliveryRequestId;
         const statusId = req.body.statusId;

@@ -5,14 +5,14 @@ const headers = {
 }
 
 const getPartyId = async (userId) => {
-    const resp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/byUserId/' + userId);
+    const resp = await axios.get(process.env.USER_SERVICE_URL + '/api/v1/users/by-user-id/' + userId);
     return resp.data.partyId;
 };
 
 module.exports = {
     getCorrectAddress: async (address) => {
         try {
-            const resp = await axios.get(process.env.GOOGLEMAP_SERVICE_URL + '/maps/v1/geocode', {
+            const resp = await axios.get(process.env.GOOGLEMAP_SERVICE_URL + '/api/v1/geocode', {
                 params: {
                     address: address
                 }
@@ -27,12 +27,10 @@ module.exports = {
     },
     getTrip: async (userId) => {
 
-        let partyId;
         try {
-            const idResp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/byUserId/' + userId);
-            partyId = idResp.data.partyId;
+            const partyId = await getPartyId(userId);
 
-            const tripResp = await axios.get(process.env.STATUS_SERVICE_URL + '/status/v1/trip/' + partyId);
+            const tripResp = await axios.get(process.env.STATUS_SERVICE_URL + '/api/v1/status/trip/by-shipper/' + partyId);
 
             return tripResp.data.points.filter(p => p.statusId == statusStrings.POINT_ASSIGNED);
 
@@ -46,7 +44,7 @@ module.exports = {
         try {
             const partyId = await getPartyId(userId);
 
-            const resp = await axios.get(process.env.SHIPMENT_SERVICE_URL + '/shipment/v1/deliveryRequest/ofuser/' + partyId);
+            const resp = await axios.get(process.env.SHIPMENT_SERVICE_URL + '/api/v1/shipments/by-user/' + partyId);
             return resp.data;
 
         } catch (err) {
@@ -74,7 +72,7 @@ module.exports = {
         try {
             const partyId = await getPartyId(userId);
 
-            const resp = await axios.get(process.env.USER_SERVICE_URL + '/users/v1/' + partyId + '/shipper');
+            const resp = await axios.get(process.env.USER_SERVICE_URL + '/api/v1/users/' + partyId + '/shipper');
             ok = resp.data.isShipper;
 
         } catch (err) {
@@ -89,7 +87,7 @@ module.exports = {
         try {
             const partyId = await getPartyId(userId);
 
-            const resp = await axios.post(process.env.USER_SERVICE_URL + '/users/v1/' + partyId + '/shipper');
+            const resp = await axios.post(process.env.USER_SERVICE_URL + '/api/v1/users/' + partyId + '/shipper');
             ok = resp.data.isShipper;
 
         } catch (err) {
@@ -103,7 +101,7 @@ module.exports = {
         let ok = false;
         try {
             const data = { "statusId": statusStrings.DELIVERY_STATUS_ACCEPTED }
-            const resp = await axios.post(process.env.SHIPMENT_SERVICE_URL + '/shipment/v1/deliveryRequest/' + deliveryRequestId + '/status', data, headers);
+            const resp = await axios.post(process.env.SHIPMENT_SERVICE_URL + '/api/v1/shipments/' + deliveryRequestId + '/status', data, headers);
             ok = resp.data.deliveryRequestId;
         } catch (err) {
             //console.error(err);
@@ -115,7 +113,7 @@ module.exports = {
 
         let ok = false;
         try {
-            await axios.post(process.env.STATUS_SERVICE_URL + '/status/v1/point/' + pointId, headers);
+            await axios.post(process.env.STATUS_SERVICE_URL + '/api/v1/status/point/' + pointId, headers);
             ok = true;
         } catch (err) {
             //console.error(err);
@@ -127,7 +125,7 @@ module.exports = {
 
         let ok = false;
         try {
-            const resp = await axios.post(process.env.USER_SERVICE_URL + '/users/v1/login', loginData);
+            const resp = await axios.post(process.env.USER_SERVICE_URL + '/api/v1/users/login', loginData);
             ok = resp.data.userId ? true : false;
         } catch (err) {
             //console.error(err);
@@ -166,7 +164,7 @@ module.exports = {
         }
 
         try {
-            await axios.post(process.env.USER_SERVICE_URL + '/users/v1/' + partyId + '/location', data, headers);
+            await axios.post(process.env.USER_SERVICE_URL + '/api/v1/users/' + partyId + '/location', data, headers);
         } catch (err) {
             //console.error(err);
         }

@@ -3,8 +3,8 @@ const router = new express.Router();
 
 const botController = require('../controllers/botController');
 
-router.post('/bot/v1/shippingRequest', botController.sendShippingRequest);
-router.post('/bot/v1/noDelivery', botController.sendNoDelivery);
-router.post('/bot/v1/status', botController.sendStatus);
+router.post('/message/shipping-request', botController.sendShippingRequest);
+router.post('/message/no-delivery', botController.sendNoDelivery);
+router.post('/message/status', botController.sendStatus);
 
 module.exports = router;

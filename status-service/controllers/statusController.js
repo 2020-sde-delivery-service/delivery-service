@@ -29,9 +29,9 @@ module.exports = {
 
             const data = { "statusId": status };
 
-            const resp = await axios.post(process.env.SHIPMENT_SERVICE_URL + "/shipment/v1/deliveryRequest/" + point.deliveryRequestId + "/status", data, headers);
+            const resp = await axios.post(process.env.SHIPMENT_SERVICE_URL + "/api/v1/shipments/" + point.deliveryRequestId + "/status", data, headers);
 
-            await axios.post(process.env.TELEGRAM_BOT_URL + "/bot/v1/status", resp.data, headers);
+            await axios.post(process.env.TELEGRAM_BOT_URL + "/api/v1/message/status", resp.data, headers);
 
             res.send(resp.data);
         } catch (error) {
@@ -63,7 +63,7 @@ module.exports = {
 
             for (let key in deliveries) {
                 promises.push(new Promise(async (resolve, reject) => {
-                    let res = await axios.get(process.env.SHIPMENT_SERVICE_URL + "/shipment/v1/deliveryRequest/" + key);
+                    let res = await axios.get(process.env.SHIPMENT_SERVICE_URL + "/api/v1/shipments/" + key);
                     deliveries[key][requestTypes.PICKUP_REQUEST] = res.data.pickupAddress;
                     deliveries[key][requestTypes.DELIVERY_REQUEST] = res.data.deliveryAddress;
                     resolve();
