@@ -1,0 +1,286 @@
+{
+   "swagger":"2.0",
+   "info":{
+      "description":"Status Service API",
+      "version":"1.0",
+      "title":"Status Service API"
+   },
+   "host":"localhost:8089",
+   "basePath":"/api/v1",
+   "tags":[
+      {
+         "name":"status",
+         "description":"Status as composition of shipments and trips"
+      }
+   ],
+   "schemes":[
+      "http"
+   ],
+   "paths":{
+      "/status/point/{pointId}":{
+         "post":{
+            "tags":[
+               "status"
+            ],
+            "description":"Process point and update relative delivery request status",
+            "consumes":[
+               "application/json"
+            ],
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"pointId",
+                  "in":"path",
+                  "description":"ID of point to process",
+                  "required":true,
+                  "type":"string"
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"Successful Operation",
+                  "schema":{
+                     "$ref":"#/definitions/DeliveryResponse"
+                  }
+               },
+               "400": {
+                   "description": "Bad Request"
+                },
+                "500": {
+                    "description": "Internal Server Error"
+                }
+            }
+         }
+      },
+      "/status/trip/by-shipper/{shipperId}":{
+          "get":{
+            "tags":[
+               "status"
+            ],
+            "description":"Returns trip and points with address",
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"shipperId",
+                  "in":"path",
+                  "description":"ID of shipper for the trip",
+                  "required":true,
+                  "type":"string"
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"Successful Operation",
+                  "schema":{
+                     "$ref":"#/definitions/TripResponse"
+                  }
+               },
+               "404":{
+                  "description":"Not found"
+               },
+               "500": {
+                    "description": "Internal Server Error"
+                }
+            }
+         }
+        }
+   },
+   "definitions":{
+       "DeliveryResponse":{
+         "type":"object",
+         "properties":{
+            "deliveryRequestId":{
+               "type":"string",
+               "example": "e12697d4-7b22-45fb-bc57-16a1c8fd8d3b"
+            },
+            "pickupAddress":{
+               "type":"string",
+               "example": "38010 Nanno, Trentino, Italy"
+            },
+            "deliveryAddress":{
+               "type":"string",
+               "example": "Trento, Trentino, Italy"
+            },
+            "unit":{
+               "type":"number",
+               "example": "Kg"
+            },
+            "weight":{
+               "type":"number",
+               "example": 1.0
+            },
+            "quantity":{
+               "type":"string",
+               "example": 1.0
+            },
+            "customerPhoneNumber":{
+               "type":"string",
+               "example": "123456789"
+            },
+            "pickupLocation":{
+               "type":"string",
+               "example": "46.3160941,11.0465022"
+            },
+            "deliveryLocation":{
+               "type":"string",
+               "example": "46.0747793,11.1217486"
+            },
+            "statusId":{
+               "type":"string",
+               "enum":[
+                  "DELIVERY_REQUEST_CREATED",
+                  "DELIVERY_REQUEST_ACCEPTED",
+                  "DELIVERY_REQUEST_REJECTED",
+                  "DELIVERY_REQUEST_PROCESSING",
+                  "DELIVERY_REQUEST_DELIVERIED"
+               ],
+               "example": "DELIVERY_REQUEST_ACCEPTED"
+            },
+            "assignedShipperId":{
+               "type":"string",
+               "example": "f2fdc076-9f82-45b9-9fa9-206db8a4814c"
+            },
+            "customerId":{
+               "type":"string",
+               "example": "f2fdc076-9f82-45b9-9fa9-206db8a4814c"
+            },
+            "createdDate":{
+               "type":"string",
+               "example": "2021-02-13T14:45:12.857+00:00"
+            },
+            "lastModifiedDate":{
+               "type":"number",
+               "example": "2021-02-13T14:45:12.857+00:00"
+            }
+         }
+      },
+      "TripResponse":{
+         "type":"object",
+         "properties":{
+            "trip":{
+                "$ref":"#/definitions/Trip"
+            },
+            "points":{
+                "type":"array",
+                "items":{
+                    "$ref":"#/definitions/PointAndAddress"
+               }
+            }
+         }
+      },
+      "Trip":{
+         "type":"object",
+         "properties":{
+            "tripId":{
+               "type":"string",
+               "example": "a17f1d83-45f1-4a99-8738-d14db8c34bd4"
+            },
+            "currentFinishedSeqId":{
+               "type":"number",
+               "example": 0
+            },
+            "completedNumber":{
+               "type":"number",
+               "example": 0
+            },
+            "estimatedCoveredCost":{
+               "type":"number",
+               "example": 0
+            },
+            "estimatedTotalCost":{
+               "type":"number",
+               "example": 2272
+            },
+            "createdDate":{
+               "type":"string",
+               "example": "2021-02-13T00:00:00.000+00:00"
+            },
+            "startDate":{
+               "type":"string",
+               "example": "2021-02-13T00:00:00.000+00:00"
+            },
+            "endDate":{
+               "type":"string",
+               "example": "2021-02-13T00:00:00.000+00:00"
+            },
+            "shipperId":{
+               "type":"string",
+               "example": "f2fdc076-9f82-45b9-9fa9-206db8a4814c"
+            },
+            "sizeOfPoints":{
+               "type":"number",
+               "example": 2
+            },
+            "statusId":{
+               "type":"string",
+               "enum":[
+                  "TRIP_STARTED",
+                  "TRIP_FINISHED"
+               ],
+               "example": "TRIP_STARTED"
+            }
+         }
+      },
+      "PointAndAddress":{
+         "type":"object",
+         "properties":{
+             "pointId":{
+               "type":"string",
+               "example": "9452b411-9bfa-4dbc-8706-8d4884a17238"
+            },
+            "seqId":{
+               "type":"number",
+               "example": 0
+            },
+            "estimatedCost":{
+               "type":"number",
+               "example": 2192
+            },
+            "deliveryRequestId":{
+               "type":"string",
+               "example": "b6627251-234e-4d4a-8133-51730d01a554"
+            },
+            "requestType":{
+               "type":"string",
+               "enum":[
+                  "PICKUP",
+                  "DELIVERY"
+               ],
+               "example": "DELIVERY"
+            },
+            "lat":{
+               "type":"number",
+               "example": 46.0747793
+            },
+            "lng":{
+               "type":"number",
+               "example": 11.1217486
+            },
+            "assignTime":{
+               "type":"string",
+               "example": "2021-02-13T00:00:00.000+00:00"
+            },
+            "statusId":{
+               "type":"string",
+               "enum":[
+                  "POINT_ASSIGNED",
+                  "POINT_PROCESSED"
+               ],
+               "example": "POINT_ASSIGNED"
+            },
+            "tripId":{
+               "type":"string",
+               "example": "a17f1d83-45f1-4a99-8738-d14db8c34bd4"
+            },
+            "address":{
+               "type":"string",
+               "example": "Trento, Trentino, Italy"
+            }
+         }
+      }
+   }
+}

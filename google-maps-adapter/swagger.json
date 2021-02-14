@@ -1,0 +1,143 @@
+{
+   "swagger":"2.0",
+   "info":{
+      "description":"Google Maps Adapter Service API",
+      "version":"1.0",
+      "title":"Google Maps Adapter Service API"
+   },
+   "host":"localhost:8080",
+   "basePath":"/api/v1",
+   "tags":[
+      {
+         "name":"geocode",
+         "description":"Geocoding object"
+      },
+      {
+         "name":"distance",
+         "description":"Distance object"
+      }
+   ],
+   "schemes":[
+      "http"
+   ],
+   "paths":{
+      "/geocode":{
+         "get":{
+            "tags":[
+               "geocode"
+            ],
+            "description":"Get coordinates and correct address of and address or location",
+            "consumes":[
+               "application/json"
+            ],
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"address",
+                  "in":"query",
+                  "description":"Address to geocode",
+                  "required":true,
+                  "type":"string"
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"Successful Operation",
+                  "schema":{
+                     "$ref":"#/definitions/Address"
+                  }
+               },
+               "400": {
+                   "description": "Bad Request"
+                },
+                "500": {
+                    "description": "Internal Server Error"
+                }
+            }
+         }
+      },
+      "/distance":{
+         "get":{
+            "tags":[
+               "distance"
+            ],
+            "description":"Get distance in time [s] and space [m] between 2 addresses or locations",
+            "consumes":[
+               "application/json"
+            ],
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "name":"origin",
+                  "in":"query",
+                  "description":"Origin address",
+                  "required":true,
+                  "type":"string"
+               },
+               {
+                  "name":"destination",
+                  "in":"query",
+                  "description":"Destination address",
+                  "required":true,
+                  "type":"string"
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"Successful Operation",
+                  "schema":{
+                     "$ref":"#/definitions/Distance"
+                  }
+               },
+               "400": {
+                   "description": "Bad Request"
+                },
+                "500": {
+                    "description": "Internal Server Error"
+                }
+            }
+         }
+      }
+   },
+   "definitions":{
+       "Distance":{
+         "type":"object",
+         "properties":{
+            "distance":{
+               "type":"number",
+               "example": 34844
+            },
+            "duration":{
+               "type":"number",
+               "example": 2192
+            }
+         }
+      },
+      "Address":{
+         "type":"object",
+         "properties":{
+            "address":{
+               "type":"string",
+               "example": "Trento, Trentino, Italy"
+            },
+            "location":{
+               "type":"object",
+               "properties":{
+                   "lat":{
+                       "type":"number",
+                       "example": 46.0747793
+                    },
+                    "lng":{
+                       "type":"number",
+                       "example": 11.1217486
+                    }
+                }
+            }
+         }
+      }
+   }
+}

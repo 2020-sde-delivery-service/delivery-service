@@ -1,0 +1,222 @@
+{
+   "swagger":"2.0",
+   "info":{
+      "description":"Telegram Bot API",
+      "version":"1.0",
+      "title":"Telegram Bot API"
+   },
+   "host":"localhost:8088",
+   "basePath":"/api/v1",
+   "tags":[
+      {
+         "name":"message",
+         "description":"Send messages with the bot"
+      }
+   ],
+   "schemes":[
+      "http"
+   ],
+   "paths":{
+      "/message/shipping-request":{
+         "post":{
+            "tags":[
+               "message"
+            ],
+            "description":"Send request message",
+            "consumes":[
+               "application/json"
+            ],
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "in":"body",
+                  "name":"body",
+                  "description":"Delivery request object",
+                  "required":true,
+                  "schema":{
+                     "$ref":"#/definitions/MessageInput"
+                  }
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"Successful Operation",
+                  "schema":{
+                     "$ref":"#/definitions/ApiResponse"
+                  }
+               },
+               "400": {
+                   "description": "Bad Request"
+                },
+                "500": {
+                    "description": "Internal Server Error"
+                }
+            }
+         }
+      },
+      "/message/no-delivery":{
+         "post":{
+            "tags":[
+               "message"
+            ],
+            "description":"Send delivery reject message",
+            "consumes":[
+               "application/json"
+            ],
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "in":"body",
+                  "name":"body",
+                  "description":"Delivery request object",
+                  "required":true,
+                  "schema":{
+                     "$ref":"#/definitions/MessageInput"
+                  }
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"Successful Operation",
+                  "schema":{
+                     "$ref":"#/definitions/ApiResponse"
+                  }
+               },
+               "400": {
+                   "description": "Bad Request"
+                },
+                "500": {
+                    "description": "Internal Server Error"
+                }
+            }
+         }
+      },
+      "/message/status":{
+         "post":{
+            "tags":[
+               "message"
+            ],
+            "description":"Send delivery status changed message",
+            "consumes":[
+               "application/json"
+            ],
+            "produces":[
+               "application/json"
+            ],
+            "parameters":[
+               {
+                  "in":"body",
+                  "name":"body",
+                  "description":"Delivery request object",
+                  "required":true,
+                  "schema":{
+                     "$ref":"#/definitions/MessageInput"
+                  }
+               }
+            ],
+            "responses":{
+               "200":{
+                  "description":"Successful Operation",
+                  "schema":{
+                     "$ref":"#/definitions/ApiResponse"
+                  }
+               },
+               "400": {
+                   "description": "Bad Request"
+                },
+                "500": {
+                    "description": "Internal Server Error"
+                }
+            }
+         }
+      }
+   },
+   "definitions":{
+      "ApiResponse":{
+         "type":"object",
+         "properties":{
+            "Success":{
+               "type":"boolean",
+               "example": true
+            }
+         }
+      },
+      "MessageInput":{
+         "type":"object",
+         "required":[
+            "deliveryRequestId",
+            "assignedShipperId",
+            "customerId"
+         ],
+         "properties":{
+            "deliveryRequestId":{
+               "type":"string",
+               "example": "e12697d4-7b22-45fb-bc57-16a1c8fd8d3b"
+            },
+            "pickupAddress":{
+               "type":"string",
+               "example": "38010 Nanno, Trentino, Italy"
+            },
+            "deliveryAddress":{
+               "type":"string",
+               "example": "Trento, Trentino, Italy"
+            },
+            "unit":{
+               "type":"number",
+               "example": "Kg"
+            },
+            "weight":{
+               "type":"number",
+               "example": 1.0
+            },
+            "quantity":{
+               "type":"string",
+               "example": 1.0
+            },
+            "customerPhoneNumber":{
+               "type":"string",
+               "example": "123456789"
+            },
+            "pickupLocation":{
+               "type":"string",
+               "example": "46.3160941,11.0465022"
+            },
+            "deliveryLocation":{
+               "type":"string",
+               "example": "46.0747793,11.1217486"
+            },
+            "statusId":{
+               "type":"string",
+               "enum":[
+                  "DELIVERY_REQUEST_CREATED",
+                  "DELIVERY_REQUEST_ACCEPTED",
+                  "DELIVERY_REQUEST_REJECTED",
+                  "DELIVERY_REQUEST_PROCESSING",
+                  "DELIVERY_REQUEST_DELIVERIED"
+               ],
+               "example": "DELIVERY_REQUEST_ACCEPTED"
+            },
+            "assignedShipperId":{
+               "type":"string",
+               "example": "f2fdc076-9f82-45b9-9fa9-206db8a4814c"
+            },
+            "customerId":{
+               "type":"string",
+               "example": "f2fdc076-9f82-45b9-9fa9-206db8a4814c"
+            },
+            "createdDate":{
+               "type":"string",
+               "example": "2021-02-13T14:45:12.857+00:00"
+            },
+            "lastModifiedDate":{
+               "type":"number",
+               "example": "2021-02-13T14:45:12.857+00:00"
+            }
+         }
+      }
+   }
+}
