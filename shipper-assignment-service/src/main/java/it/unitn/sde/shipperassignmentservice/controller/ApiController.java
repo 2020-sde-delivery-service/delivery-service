@@ -24,7 +24,7 @@ public class ApiController {
     private AssignService assignService;
 
     @PostMapping("/get-ranked-candidate")
-    public ResponseEntity<?> createDeliveryRequest(@RequestBody RequestModel requestModel) {
+    public ResponseEntity<?> getRankedCandidate(@RequestBody RequestModel requestModel) {
         log.info("start ranking  -- start");
         List<String> shippers=assignService.getListShipper(requestModel);
         Map<String,Object> res= new HashMap<>();
