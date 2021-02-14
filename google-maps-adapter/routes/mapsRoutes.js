@@ -5,7 +5,7 @@ const mapsController = require('../controllers/mapsController');
 
 //router.get('/one/:id', mapsController.getOne);
 router.get('/distance', mapsController.getSingularDistance);
-router.get('/matrix', mapsController.getMatrix);
 router.get('/geocode', mapsController.getCoordinates);
+//router.get('/matrix', mapsController.getMatrix);
 
 module.exports = router;
