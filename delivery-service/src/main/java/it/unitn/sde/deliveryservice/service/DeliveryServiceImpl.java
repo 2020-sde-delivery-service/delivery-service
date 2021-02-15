@@ -100,9 +100,21 @@ public class DeliveryServiceImpl implements DeliveryService {
                                                         tripInput, Trip.class);
                                         timer.cancel();
                                 } else {
-                                        if (i.get() >= candidates.getData().size())
+                                        if (i.get() >= candidates.getData().size()) {
+                                                log.info("No shipper accepted");
+                                                Map<String, String> body = new HashMap<>();
+                                                body.put("statusId", StatusEnum.DELIVERY_REQUEST_REJECTED.name());
+                                                DeliveryRequestModel deliveryRequestModel = restTemplate.postForObject(
+                                                                shimentServiceUrl + ApiConstant.REJECT_DELIVERY_API_0
+                                                                                + "/"
+                                                                                + deliveryModel.getDeliveryRequestId()
+                                                                                                .toString()
+                                                                                + ApiConstant.REJECT_DELIVERY_API_1,
+                                                                body, DeliveryRequestModel.class);
+                                                restTemplate.postForObject(telegramBotUrl + ApiConstant.SEND_NODELIVERY,
+                                                                deliveryRequestModel, Object.class);
                                                 timer.cancel();
-                                        else {
+                                        } else {
 
                                                 log.info("Shipper " + i + " " + candidates.getData().get(i.get()));
                                                 Map<String, String> body = new HashMap<>();
@@ -122,18 +134,5 @@ public class DeliveryServiceImpl implements DeliveryService {
                         }
 
                 }, 0, maximumWaitTime);
-                if (!accepted.get()) {
-
-                        log.info("No shipper accepted");
-                        Map<String, String> body = new HashMap<>();
-                        body.put("statusId", StatusEnum.DELIVERY_REQUEST_REJECTED.name());
-                        DeliveryRequestModel deliveryRequestModel = restTemplate.postForObject(
-                                        shimentServiceUrl + ApiConstant.REJECT_DELIVERY_API_0 + "/"
-                                                        + deliveryModel.getDeliveryRequestId().toString()
-                                                        + ApiConstant.REJECT_DELIVERY_API_1,
-                                        body, DeliveryRequestModel.class);
-                        restTemplate.postForObject(telegramBotUrl + ApiConstant.SEND_NODELIVERY, deliveryRequestModel,
-                                        Object.class);
-                }
         }
 }
