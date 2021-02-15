@@ -2,6 +2,10 @@ package it.unitn.sde.deliveryservice.service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -73,48 +77,63 @@ public class DeliveryServiceImpl implements DeliveryService {
                 ListCandidateModel candidates = restTemplate.postForObject(
                                 shipperAssignmentService + ApiConstant.GET_CANDIDATE, requestModel,
                                 ListCandidateModel.class);
-                boolean accepted = false;
-                for (int i = 0; i < candidates.getData().size(); i++) {
-                        log.info("start " + i);
-                        Map<String, String> body = new HashMap<>();
-                        body.put("shipperId", candidates.getData().get(i));
-                        DeliveryRequestModel re = restTemplate.postForObject(
-                                        shimentServiceUrl + ApiConstant.ASSIGN_SHIPPER_API_0 + "/"
-                                                        + deliveryModel.getDeliveryRequestId().toString()
-                                                        + ApiConstant.ASSIGN_SHIPPER_API_1,
-                                        body, DeliveryRequestModel.class);
-                        restTemplate.postForObject(telegramBotUrl + ApiConstant.SEND_REQUEST, re, Object.class);
-                        try {
-                                Thread.sleep(maximumWaitTime);
-                        } catch (InterruptedException e) {
-                                e.printStackTrace();
+                AtomicBoolean accepted = new AtomicBoolean(false);
+                AtomicInteger i = new AtomicInteger(0);
+                Timer timer = new Timer();
+                timer.schedule(new TimerTask() {
+
+                        @Override
+                        public void run() {
+
+                                DeliveryRequestModel re = restTemplate.getForObject(
+                                                shimentServiceUrl + ApiConstant.GET_DELIVERY_REQUEST_API + "/"
+                                                                + deliveryModel.getDeliveryRequestId().toString(),
+                                                DeliveryRequestModel.class);
+                                if (StatusEnum.DELIVERY_REQUEST_ACCEPTED.name().equals(re.getStatusId())) {
+                                        log.info("shipper accepted - assignment process completed");
+                                        accepted.set(true);
+                                        restTemplate.postForObject(telegramBotUrl + ApiConstant.SEND_STATUS, re,
+                                                        Object.class);
+                                        Map<String, String> tripInput = new HashMap<>();
+                                        tripInput.put("deliveryRequestId", re.getDeliveryRequestId().toString());
+                                        Trip trip = restTemplate.postForObject(tripServiceUrl + ApiConstant.CREATE_TRIP,
+                                                        tripInput, Trip.class);
+                                        timer.cancel();
+                                } else {
+                                        if (i.get() >= candidates.getData().size())
+                                                timer.cancel();
+                                        else {
+
+                                                log.info("Shipper " + i + " " + candidates.getData().get(i.get()));
+                                                Map<String, String> body = new HashMap<>();
+                                                body.put("shipperId", candidates.getData().get(i.get()));
+                                                re = restTemplate.postForObject(
+                                                                shimentServiceUrl + ApiConstant.ASSIGN_SHIPPER_API_0
+                                                                                + "/"
+                                                                                + deliveryModel.getDeliveryRequestId()
+                                                                                                .toString()
+                                                                                + ApiConstant.ASSIGN_SHIPPER_API_1,
+                                                                body, DeliveryRequestModel.class);
+                                                restTemplate.postForObject(telegramBotUrl + ApiConstant.SEND_REQUEST,
+                                                                re, Object.class);
+                                                i.addAndGet(1);
+                                        }
+                                }
                         }
-                        log.info("end " + i);
-                        re = restTemplate.getForObject(
-                                        shimentServiceUrl + ApiConstant.GET_DELIVERY_REQUEST_API + "/"
-                                                        + deliveryModel.getDeliveryRequestId().toString(),
-                                        DeliveryRequestModel.class);
-                        if (StatusEnum.DELIVERY_REQUEST_ACCEPTED.name().equals(re.getStatusId())) {
-                                log.info("assignment process completed");
-                                accepted = true;
-                                restTemplate.postForObject(telegramBotUrl + ApiConstant.SEND_STATUS, re, Object.class);
-                                Map<String, String> tripInput = new HashMap<>();
-                                tripInput.put("deliveryRequestId", re.getDeliveryRequestId().toString());
-                                Trip trip = restTemplate.postForObject(tripServiceUrl + ApiConstant.CREATE_TRIP,
-                                                tripInput, Trip.class);
-                                break;
-                        }
-                }
-                //thread seems to be waiting for all requests
-                if (!accepted) {
+
+                }, 0, maximumWaitTime);
+                if (!accepted.get()) {
+
+                        log.info("No shipper accepted");
                         Map<String, String> body = new HashMap<>();
                         body.put("statusId", StatusEnum.DELIVERY_REQUEST_REJECTED.name());
                         DeliveryRequestModel deliveryRequestModel = restTemplate.postForObject(
-                                shimentServiceUrl + ApiConstant.REJECT_DELIVERY_API_0 + "/"
-                                        + deliveryModel.getDeliveryRequestId().toString()
-                                        + ApiConstant.REJECT_DELIVERY_API_1,
-                                body, DeliveryRequestModel.class);
-                        restTemplate.postForObject(telegramBotUrl + ApiConstant.SEND_NODELIVERY, deliveryRequestModel, Object.class);
+                                        shimentServiceUrl + ApiConstant.REJECT_DELIVERY_API_0 + "/"
+                                                        + deliveryModel.getDeliveryRequestId().toString()
+                                                        + ApiConstant.REJECT_DELIVERY_API_1,
+                                        body, DeliveryRequestModel.class);
+                        restTemplate.postForObject(telegramBotUrl + ApiConstant.SEND_NODELIVERY, deliveryRequestModel,
+                                        Object.class);
                 }
         }
 }
