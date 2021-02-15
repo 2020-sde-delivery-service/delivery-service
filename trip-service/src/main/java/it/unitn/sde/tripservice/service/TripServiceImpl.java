@@ -117,16 +117,18 @@ public class TripServiceImpl implements TripService {
         Point point = restTemplate.getForObject(dataServiceUrl + ApiConstant.POINT + "/" + pointId, Point.class);
         Trip trip = restTemplate.getForObject(dataServiceUrl + ApiConstant.TRIP + "/" + point.getTripId(), Trip.class);
         //should check if point can be processed and calculate sequence
-        Map<String, Object> body = new HashMap<>();
-        body.put("statusId", StatusEnum.POINT_PROCESSED.name());
-        body.put("seqId", trip.getCurrentFinishedSeqId() + 1);
-        point = restTemplate.patchForObject(dataServiceUrl + ApiConstant.POINT + "/" + pointId, body, Point.class);
-        body = new HashMap<>();
-        body.put("currentFinishedSeqId", trip.getCurrentFinishedSeqId() + 1);
-        if (trip.getSizeOfPoints() == trip.getCompletedNumber()+1)
-            body.put("statusId", StatusEnum.TRIP_FINISHED.name());
-        trip = restTemplate.patchForObject(dataServiceUrl + ApiConstant.TRIP + "/" + trip.getTripId(), body,
-                Trip.class);
+        if(!(StatusEnum.POINT_PROCESSED.name().equals(point.getStatusId()))) {
+            Map<String, Object> body = new HashMap<>();
+            body.put("statusId", StatusEnum.POINT_PROCESSED.name());
+            body.put("seqId", trip.getCurrentFinishedSeqId() + 1);
+            point = restTemplate.patchForObject(dataServiceUrl + ApiConstant.POINT + "/" + pointId, body, Point.class);
+            body = new HashMap<>();
+            body.put("currentFinishedSeqId", trip.getCurrentFinishedSeqId() + 1);
+            if (trip.getSizeOfPoints() == trip.getCompletedNumber() + 1)
+                body.put("statusId", StatusEnum.TRIP_FINISHED.name());
+            trip = restTemplate.patchForObject(dataServiceUrl + ApiConstant.TRIP + "/" + trip.getTripId(), body,
+                    Trip.class);
+        }
         return point;
     }
 
