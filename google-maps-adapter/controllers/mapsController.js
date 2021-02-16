@@ -4,32 +4,6 @@ let dotenv = require('dotenv');
 dotenv.config();
 
 module.exports = {
-    /*
-    getOne: async (req, res) => {
-        const id = req.params.id;
-
-        if (!id) {
-            return res.status(400).send();
-        }
-
-        try {
-            const resp = await axios.get('https://url', {
-                params: {
-                    id: id
-                }
-            });
-            //console.log(resp.data);
-            res.send(resp.data);
-        } catch (error) {
-            if (error.response) {
-                res.status(error.response.status).send({ error });
-            } else {
-                res.status(500).send({ error });
-            }
-            //console.error(error);
-        }
-    },
-    */
     getSingularDistance: async (req, res) => {
 
         console.log("get-singular-distance -start");
@@ -65,6 +39,7 @@ module.exports = {
             //console.error(error);
         }
     },
+    /*
     getMatrix: async (req, res) => {
 
         console.log("get-matrix -start");
@@ -99,6 +74,7 @@ module.exports = {
             //console.error(error);
         }
     },
+    */
     getCoordinates: async (req, res) => {
 
         console.log("get-coordinates -start");

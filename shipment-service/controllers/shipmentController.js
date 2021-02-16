@@ -25,25 +25,6 @@ module.exports = {
             //console.error(error);
         }
     },
-    /*
-    getOne: async (req, res) => {
-        const deliveryRequestId = req.params.deliveryRequestId;
-        try {
-            const resp = await axios.get(process.env.DATA_SERVICE_URL + DELIVERY_REQUEST_API + "/" + id, {
-
-                params: {
-                    id: id
-                }
-
-            });
-            console.log(resp.data);
-            res.send(resp.data);
-        } catch (err) {
-            console.error(err);
-            res.status(500).send()
-        }
-    },
-    */
     getOne: async (req, res) => {
 
         console.log("get-one -start");
@@ -126,35 +107,6 @@ module.exports = {
             //console.error(error);
         }
     },
-    acceptRequest: async (req, res) => {
-        // try {
-        //     const resp = await axios.patch(process.env.DATA_SERVICE_URL+DELIVERY_REQUEST_API, req.body);
-        //     console.log(resp.data);
-        //     res.send(resp.data);
-        // } catch (err) {
-        //     console.error(err);
-        //     res.status(500).send()
-        // }
-    },
-    getShipmentsOfShipper: async (req, res) => {
-
-        /*
-
-        const shipperId = req.params.shipperId;
-
-        //check correct status
-        const body = { "statusId": DELIVERY_STATUS_DELIVERED }
-
-        try {
-            const resp = await axios.patch(process.env.DATA_SERVICE_URL + DELIVERY_REQUEST_API + "/" + deliveryRequestId, body);
-            console.log(resp.data);
-            res.send(resp.data);
-        } catch (err) {
-            console.error(err);
-            res.status(500).send()
-        }
-        */
-    },
     getShipmentsOfUser: async (req, res) => {
 
         console.log("get-shipments-of-user -start");
@@ -180,21 +132,5 @@ module.exports = {
             }
             //console.error(error);
         }
-        /*
-
-        const shipperId = req.params.shipperId;
-
-        //check correct status
-        const body = { "statusId": DELIVERY_STATUS_DELIVERED }
-
-        try {
-            const resp = await axios.patch(process.env.DATA_SERVICE_URL + DELIVERY_REQUEST_API + "/" + deliveryRequestId, body);
-            console.log(resp.data);
-            res.send(resp.data);
-        } catch (err) {
-            console.error(err);
-            res.status(500).send()
-        }
-        */
-    },
+    }
 }

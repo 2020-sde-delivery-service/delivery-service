@@ -21,7 +21,7 @@ app.use(function (req, res, next) {
 
 var port = process.env.PORT || process.env.SERVER_PORT;
 
-app.get('/', (req, res) => res.send('Hello World with Express'));
+//app.get('/', (req, res) => res.send('Hello World with Express'));
 
 app.use('/api/v1', botRoutes);
 

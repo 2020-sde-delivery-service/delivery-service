@@ -26,9 +26,7 @@ module.exports = {
             //console.error(err);
         }
 
-        const text = strings.BC_ASK_MESSAGE + '\n\n' + strings.BC_RECAP_MESSAGE(deliveryRequest) /*+
-            '\n\nIf you want to accept click that command: /acceptDelivery' + deliveryRequest.deliveryRequestId;
-            */
+        const text = strings.BC_ASK_MESSAGE + '\n\n' + strings.BC_RECAP_MESSAGE(deliveryRequest);
 
         try {
             await bot.telegram.sendMessage(userId, text,
